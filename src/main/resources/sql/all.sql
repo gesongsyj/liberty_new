@@ -1,0 +1,18 @@
+#namespace("kline")
+	#include("kline.sql")
+#end
+#namespace("stroke")
+	#include("stroke.sql")
+#end
+#namespace("currency")
+	#include("currency.sql")
+#end
+#namespace("line")
+	#include("line.sql")
+#end
+#namespace("account")
+	#include("account.sql")
+#end
+#namespace("strategy")
+	#include("strategy.sql")
+#end
