@@ -56,7 +56,8 @@ public class CurrencyController extends BaseController {
 		KlineController klineController = new KlineController();
 		List<Currency> listAll = Currency.dao.listAll();
 		klineController.multiProData(listAll);
-		redirect("/currency/list");
+//		redirect("/currency/list");
+		list();
 	}
 
 	/**
@@ -67,7 +68,8 @@ public class CurrencyController extends BaseController {
 		KlineController klineController = new KlineController();
 		List<Currency> listAll = Currency.dao.listForStrategy();
 		klineController.multiProData(listAll);
-		redirect("/currency/list");
+//		redirect("/currency/list");
+		list();
 	}
 
 	/**
@@ -79,7 +81,8 @@ public class CurrencyController extends BaseController {
 		List<Currency> cs = currencyKit.update();
 //		KlineController klineController = new KlineController();
 //		klineController.multiProData(cs);
-		redirect("/currency/list");
+//		redirect("/currency/list");
+		list();
 	}
 
 	/**
@@ -198,7 +201,8 @@ public class CurrencyController extends BaseController {
 		klineController.downloadData(c.getCode());
 		klineController.createStroke(c.getCode());
 		klineController.createLine(c.getCode());
-		redirect("/currency/list");
+//		redirect("/currency/list");
+		list();
 	}
 
 	/**
