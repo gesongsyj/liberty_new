@@ -16,7 +16,7 @@ import java.util.Vector;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public abstract class StrategeExecutor {
+public abstract class StrategyExecutor {
 	protected Strategy strategy;
 
 	public Strategy getStrategy() {

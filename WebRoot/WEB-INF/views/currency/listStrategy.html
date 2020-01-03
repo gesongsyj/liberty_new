@@ -13,6 +13,22 @@
 
 <script type="text/javascript">
 		$(function() {
+			$.ajax({
+				type:'post',
+				url:"queryStrategy",
+				dataType:"json",
+				success:function(data){
+					$("#strategy_select").empty();
+					$("#strategy_select").append("<option value=''>请选择策略</option>");
+					for(var i=0;i<data.p2pdata.length;i++){
+						if(data.p2pdata[i].id == ${(qo.strategyId)!'-1'}){
+							$("#strategy_select").append('<option value='+data.p2pdata[i].id+' selected>'+data.p2pdata[i].describe+'</option>');
+						}else{
+							$("#strategy_select").append('<option value='+data.p2pdata[i].id+'>'+data.p2pdata[i].describe+'</option>');
+						}
+					}
+				}
+			});
 			$('#query').click(function() {
 				$('#currentPage').val(1);
 				$('#currencyForm').submit();
@@ -20,7 +36,7 @@
 			$('#pagination').twbsPagination({
 				totalPages: ${pageResult.totalPage},
 				visiblePages:5,
-				startPage:${pageResult.pageNumber},
+				startPage: ${pageResult.pageNumber},
 				onPageClick:function(event,page){
 					$('#currentPage').val(page);
 					$('#currencyForm').submit();
@@ -41,7 +57,7 @@
 			$('#cutLine_btn').click(function() {
 				$('#cutLineForm').submit();
 			});
-		})
+		});
 
 </script>
 </head>
@@ -54,14 +70,16 @@
 				<form id="currencyForm" action="listStrategy" class="form-inline"
 					style="margin-top: 30px;" method="post">
 					<input type="hidden" id="currentPage" name="qo.currentPage" value="${qo.currentPage}"/>
-					<div class="form-group" style="margin-left: 3%;">
-						<label for="exampleInputName2">股票名称</label> <input type="text"
-							class="form-control" id="exampleInputName" name="qo.name" value="${(qo.name)!''}">
+					<div class="form-group" style="margin-left: 1%;">
+						<label for="exampleInputName">股票名称或代码</label> <input type="text"
+							class="form-control" id="exampleInputName" name="qo.keyword" value="${(qo.keyword)!''}">
 					</div>
-					<div class="form-group" style="margin-left: 3%">
-						<label for="exampleInputEmail2">股票代码</label> <input type="text"
-							class="form-control" id="exampleInputEmail" name="qo.code" value="${(qo.code)!''}">
+					<div class="form-group" style="margin-left: 1%">
+						<label for="strategy_select">策略列表</label>
+						<select class="form-control" id="strategy_select" name="qo.strategyId">
+						</select>
 					</div>
+
 					<button id="query" type="submit" class="btn btn-default"
 						style="margin-left: 3%">Search</button>
 					 <label class="btn btn-primary" style="margin-left: 3%">
@@ -86,14 +104,14 @@
 					<tbody>
 						<#if pageResult.list?size==0>
 						<tr>
-							<td colspan="5">暂无数据...
+							<td colspan="6">暂无数据...
 						</tr>
 						</#if>
 						<#list pageResult.list as p>
 						<tr>
-							<td>${p_index+1}
+							<td>${p_index}
 							<td>${p.name}
-							<td>${p.code} 
+							<td>${p.code}
 							<td>${p.describe}
 							<#if (p.cutLine)??>
 								<td>${p.cutLine}
@@ -108,7 +126,7 @@
 								</#if>
 								<a class="btn btn-danger" href="../currency/removeFromStrategy?csId=${p.csId}&qo.currentPage=${qo.currentPage}" role="button" target="_Blank">移出策略池</a>
 								<button type="button" class="btn btn-success"
-										data-toggle="modal" data-target="#myModal" 
+										data-toggle="modal" data-target="#myModal"
 										data-id="${p.csId}" data-currentpage="${qo.currentPage}">设置止损线</button></td>
 						</tr>
 						</#list>
@@ -120,7 +138,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	  <div class="modal-dialog" role="document">
@@ -129,14 +147,13 @@
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <h4 class="modal-title" id="exampleModalLabel">设置止损线</h4>
 	      </div>
-	      
+
 	       <div class="modal-body" style="text-align: center;"
 					id="down_btn_text">
 		      	<form id="cutLineForm" action="cutLine" class="form-inline"
 										 method="post">
-					<input hidden="true" id="id" name="id" />
-					<input hidden="true" id="currentPage" name="qo.currentPage" />
-					<div class="form-group">止损线: 
+					<input hidden="true" id="id" name="id"/>
+					<div class="form-group">止损线:
 						<input type="text" placeholder="填null表示清除止损线设置" class="form-control"
 							name="cutLine">
 					</div>
@@ -149,6 +166,6 @@
 	    </div>
 	  </div>
 	</div>
-	
+
 </body>
 </html>

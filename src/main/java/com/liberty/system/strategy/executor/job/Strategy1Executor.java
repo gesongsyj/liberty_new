@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -23,9 +19,12 @@ import com.liberty.system.model.Strategy;
 import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.executor.Executor;
 
-public class Stratege1Executor extends StrategeExecutor implements Executor {
+/**
+ * 第三类买点
+ */
+public class Strategy1Executor extends StrategyExecutor implements Executor {
 
-	public Stratege1Executor() {
+	public Strategy1Executor() {
 		this.strategy = Strategy.dao.findById(1);
 	}
 

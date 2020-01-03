@@ -9,11 +9,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.liberty.common.web.BaseController;
-import com.liberty.system.blackHouse.RemoveStrategyBh;
-import com.liberty.system.strategy.cuttor.LossCuttor;
 import com.liberty.system.strategy.executor.Executor;
-import com.liberty.system.strategy.executor.job.Stratege1Executor;
-import com.liberty.system.strategy.executor.job.Stratege2Executor;
+import com.liberty.system.strategy.executor.job.Strategy1Executor;
+import com.liberty.system.strategy.executor.job.Strategy2Executor;
 
 
 /**
@@ -27,8 +25,8 @@ public class RoutineController5 extends BaseController implements Job {
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		exes.add(new Stratege1Executor());
-		exes.add(new Stratege2Executor());
+		exes.add(new Strategy1Executor());
+		exes.add(new Strategy2Executor());
 		for (Executor executor : exes) {
 			executor.execute(null);
 		}

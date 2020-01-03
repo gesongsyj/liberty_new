@@ -27,9 +27,9 @@ public class CurrencyKit_Gp implements CurrencyKit {
 		ArrayList<Currency> cs = new ArrayList<Currency>();
 		for (int i = 1; i <= pagesize; i++) {
 			String url_shanghai = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C.2&st=(ChangePercent)&sr=-1&p="
-					+ i + "&ps=20&_=" + System.currentTimeMillis();
+					+ i + "&ps=2000&_=" + System.currentTimeMillis();
 			String url_shenzhen = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C._SZAME&st=(ChangePercent)&sr=-1&p="
-					+ i + "&ps=20&_=" + System.currentTimeMillis();
+					+ i + "&ps=2000&_=" + System.currentTimeMillis();
 			//上证100只股票
 			queryCurrency(cs,url_shanghai);
 			//深证100只股票
@@ -55,9 +55,16 @@ public class CurrencyKit_Gp implements CurrencyKit {
 					c.update();
 				}
 			}
-			currency.setCode(split[1]);
+			String code = split[1];
+			currency.setCode(code);
 			currency.setName(split[2]);
-			currency.setCurrencyType("1");
+			if(code.startsWith("0")){
+				currency.setCurrencyType(Currency.CURRENCY_TYPE_SZ);
+			}else if(code.startsWith("6")){
+				currency.setCurrencyType(Currency.CURRENCY_TYPE_SH);
+			}else{
+				currency.setCurrencyType(Currency.CURRENCY_TYPE_KCB);
+			}
 			cs.add(currency);
 			currency.save();
 		}

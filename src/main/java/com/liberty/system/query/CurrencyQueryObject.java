@@ -6,6 +6,7 @@ public class CurrencyQueryObject extends QueryObject {
 	private String keyword;
 	private String cutLine;
 	private String followed;
+	private String strategyId;
 	
 	public String getFollowed() {
 		return followed;
@@ -37,5 +38,12 @@ public class CurrencyQueryObject extends QueryObject {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
-	
+
+	public String getStrategyId() {
+		return strategyId;
+	}
+
+	public void setStrategyId(String strategyId) {
+		this.strategyId = strategyId;
+	}
 }

@@ -17,6 +17,9 @@ import com.liberty.system.query.StrokeQueryObject;
  */
 @SuppressWarnings("serial")
 public class Currency extends BaseCurrency<Currency> {
+	public static final String CURRENCY_TYPE_KCB = "2";
+	public static final String CURRENCY_TYPE_SH = "1";
+	public static final String CURRENCY_TYPE_SZ = "0";
 	public static final Currency dao = new Currency().dao();
 
 //	private List<Strategy> strategies;

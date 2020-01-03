@@ -19,15 +19,15 @@ import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;
 import com.liberty.system.model.Strategy;
 import com.liberty.system.strategy.executor.Executor;
-import com.liberty.system.strategy.executor.job.StrategeExecutor;
+import com.liberty.system.strategy.executor.job.StrategyExecutor;
 
-public class RealTimeStrategeExe1 extends StrategeExecutor implements Executor  {
+public class RealTimeStrategyExe1 extends StrategyExecutor implements Executor  {
 	//昨日下跌或者涨幅不高的存在这个map中,第一轮筛选之后只循环这个map
 	public static Map<String, Currency> currencyMap=new HashMap<String, Currency>();
 	//已经发过邮件的不再处理
 	public static Map<String, Currency> currencyMapMailed=new HashMap<String, Currency>();
 	
-	public RealTimeStrategeExe1() {
+	public RealTimeStrategyExe1() {
 		this.strategy = Strategy.dao.findById(0);
 	}
 

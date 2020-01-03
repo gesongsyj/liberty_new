@@ -15,7 +15,11 @@ import com.jfplugin.mail.MailPlugin;
 import com.liberty.common.interceptor.CoreInterceptor;
 import com.liberty.common.interceptor.ShiroInterceptor;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolPlugin;
+import com.liberty.system.model.Currency;
+import com.liberty.system.strategy.executor.job.Strategy3Executor;
 import net.dreamlu.event.EventPlugin;
+
+import java.util.List;
 
 public class CoreConfig extends JFinalConfig {
 	@Override
@@ -125,14 +129,14 @@ public class CoreConfig extends JFinalConfig {
 //			klineController.downloadData(currency.getCode());
 //		}
 		
-		//执行策略二
-//		Stratege2Executor executor = new Stratege2Executor();
+		//执行策略三
+//		Strategy3Executor executor = new Strategy3Executor();
 //		executor.execute(null);
-//		executor.execute("600086");
+//		executor.execute("601318");
 //		List<Currency> allCurrency = Currency.dao.listAll();
 //		for (int i = 0; i < allCurrency.size(); i++) {
 //			System.out.println("这是第"+i+"只股票");
-//			boolean executeSingle = executor.executeSingle(allCurrency.get(i).getCode());
+//			executor.execute(allCurrency.get(i).getCode());
 //		}
 	}
 

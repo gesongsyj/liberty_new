@@ -18,7 +18,7 @@
 				$('#currencyForm').submit();
 			});
 			$('#pagination').twbsPagination({
-				totalPages: ${pageResult.totalPage},
+				totalPages:${pageResult.totalPage},
 				visiblePages:5,
 				startPage:${pageResult.pageNumber},
 				onPageClick:function(event,page){
@@ -70,12 +70,8 @@
 					<input type="hidden" id="currentPage" name="qo.currentPage"
 						value="" />
 					<div class="form-group" style="margin-left: 3%;">
-						<label for="exampleInputName2">股票名称</label> <input type="text"
-							class="form-control" id="exampleInputName" name="qo.name" value="${(qo.name)!''}">
-					</div>
-					<div class="form-group" style="margin-left: 3%">
-						<label for="exampleInputEmail2">股票代码</label> <input type="text"
-							class="form-control" id="exampleInputEmail" name="qo.code" value="${(qo.code)!''}">
+						<label for="exampleInputName">股票名称或代码</label> <input type="text"
+							class="form-control" id="exampleInputName" name="qo.keyword" value="${(qo.keyword)!''}">
 					</div>
 					<button id="query" type="submit" class="btn btn-default"
 						style="margin-left: 3%">Search</button>
@@ -148,8 +144,7 @@
 		      	<form id="addStrategyForm" action="addStrategy" class="form-inline"
 										 method="post">
 					<input hidden="true" id="id" name="id" />
-					<input hidden="true" id="currentPage" name="qo.currentPage" />
-					<div class="form-group">策略列表: 
+					<div class="form-group">策略列表:
 						<select id="strategy_select" class="form-control" name="strategyId">
 						</select>
 					</div>

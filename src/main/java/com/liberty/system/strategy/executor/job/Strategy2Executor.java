@@ -15,10 +15,12 @@ import com.liberty.system.model.Line;
 import com.liberty.system.model.Strategy;
 import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.executor.Executor;
-import com.sun.tools.internal.xjc.model.SymbolSpace;
 
-public class Stratege2Executor extends StrategeExecutor implements Executor {
-	public Stratege2Executor() {
+/**
+ * 第一类买点
+ */
+public class Strategy2Executor extends StrategyExecutor implements Executor {
+	public Strategy2Executor() {
 		this.strategy = Strategy.dao.findById(2);
 	}
 

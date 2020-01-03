@@ -2,12 +2,8 @@
 	select c.*,cs.id as csid
 	from currency c left join currency_strategy cs on cs.currencyId=c.id
 	#set(flag=0)
-	#if(qo.name)
-		#(flag==0?"where":"and") name like concat("%",#para(qo.name),"%")
-		#set(flag=1)
-	#end
-	#if(qo.code)
-		#(flag==0?"where":"and") code=#para(qo.code)
+	#if(qo.keyword)
+		#(flag==0?"where":"and") (name like concat("%",#para(qo.keyword),"%") or code like concat("%",#para(qo.keyword),"%"))
 		#set(flag=1)
 	#end
 	#if(qo.followed)
@@ -20,12 +16,8 @@
 	select c.*,cs.id as csId,s.`describe` as `describe`,cs.cutLine as cutLine from currency c RIGHT JOIN currency_strategy cs 
 	on cs.currencyId=c.id join strategy s on cs.strategyId=s.id
 	#set(flag=0)
-	#if(qo.name)
-		#(flag==0?"where":"and") c.name like concat("%",#para(qo.name),"%")
-		#set(flag=1)
-	#end
-	#if(qo.code)
-		#(flag==0?"where":"and") c.code=#para(qo.code)
+	#if(qo.keyword)
+		#(flag==0?"where":"and") (c.name like concat("%",#para(qo.keyword),"%") or c.code like concat("%",#para(qo.keyword),"%"))
 		#set(flag=1)
 	#end
 	#if(qo.cutLine)
@@ -34,6 +26,10 @@
 	#end
 	#if(qo.followed)
 		#(flag==0?"where":"and") c.followed=1
+		#set(flag=1)
+	#end
+	#if(qo.strategyId)
+		#(flag==0?"where":"and") cs.strategyId=#para(qo.strategyId)
 		#set(flag=1)
 	#end
 #end
