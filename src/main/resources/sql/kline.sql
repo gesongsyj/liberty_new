@@ -23,7 +23,7 @@
 	order by k.date desc
 #end
 
-#sql("getLastByCode")
+#sql("getLast2ByCode")
 	select k.*
 	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
 	#set(flag=0)
@@ -110,5 +110,23 @@
 		#(flag==0?"where":"and") currencyId >= #para(currencyId)
 		#set(flag=1)
 	#end
+#end
+#sql("list250ByDate")
+	select k.*
+	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") k.type = #para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") k.date <= #para(date)
+		#set(flag=1)
+	#end
+	order by date desc limit #para(limit)
 #end
 

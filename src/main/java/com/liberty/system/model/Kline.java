@@ -19,6 +19,9 @@ import com.liberty.system.query.KlineQueryObject;
  */
 @SuppressWarnings("serial")
 public class Kline extends BaseKline<Kline> {
+	// 日K线
+	public static final String KLINE_TYPE_K = "k";
+
 	public static final Kline dao = new Kline().dao();
 
 	public Page<Kline> paginate(KlineQueryObject qo) {
@@ -31,8 +34,8 @@ public class Kline extends BaseKline<Kline> {
 		Kline kline = dao.findFirst(sqlPara);
 		return kline;
 	}
-	
-	public List<Kline> getLastByCode(String code, String type) {
+
+	public List<Kline> getLast2ByCode(String code, String type) {
 		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
 		List<Kline> list = dao.find(sqlPara);
 		return list;
@@ -90,4 +93,9 @@ public class Kline extends BaseKline<Kline> {
 		return list;
 	}
 
+	public List<Kline> list250ByDate(String code,String type,Date date,int limit) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code",code).set("type",type).set("date",date).set("limit",limit));
+		List<Kline> list = dao.find(sqlPara);
+		return list;
+	}
 }

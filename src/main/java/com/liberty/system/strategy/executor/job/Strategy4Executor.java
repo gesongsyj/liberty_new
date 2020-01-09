@@ -7,11 +7,14 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfplugin.mail.MailKit;
 import com.liberty.common.utils.HTTPUtil;
+import com.liberty.common.utils.MaUtil;
 import com.liberty.common.utils.MailUtil;
 import com.liberty.common.utils.NumUtil;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.Currency;
+import com.liberty.system.model.Kline;
 import com.liberty.system.model.Strategy;
+import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.executor.Executor;
 
 import java.text.MessageFormat;
@@ -21,20 +24,12 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * 查找绩优股
- * 1:归属净利润近三年连续增长
- * 2:净利润增长率在阈值之上,如:20%
+ * 前一笔的最低点在250日均线下,目前股价上穿站稳250日均线
  */
-public class Strategy3Executor extends StrategyExecutor implements Executor {
-    // 主要指标查询url，type：0-按报告期，1-按年度，2-按单季度；code后面跟SH/SZ+股票代码
-    private static final String QUERY_METRIC_URL_YEAR = "http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=1&code={0}";
-    private static final String QUERY_METRIC_URL_REPORT = "http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=0&code={0}";
-    // 主要指标查询拼接股票代码前缀前缀
-    private static final String QUERY_METRIC_SH = "SH";
-    private static final String QUERY_METRIC_SZ = "SZ";
+public class Strategy4Executor extends StrategyExecutor implements Executor {
 
-    public Strategy3Executor() {
-        this.strategy = Strategy.dao.findById(3);
+    public Strategy4Executor() {
+        this.strategy = Strategy.dao.findById(4);
     }
 
     @Override
@@ -79,42 +74,29 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        String query_metric_url_year_full_url;
-        String query_metric_url_report_full_url;
-        if(currency.getCurrencyType().equals(Currency.CURRENCY_TYPE_SH)) {
-            query_metric_url_year_full_url = MessageFormat.format(QUERY_METRIC_URL_YEAR, QUERY_METRIC_SH+currency.getCode());
-            query_metric_url_report_full_url = MessageFormat.format(QUERY_METRIC_URL_REPORT, QUERY_METRIC_SH+currency.getCode());
-        }else{//深证或科创板
-            query_metric_url_year_full_url =MessageFormat.format(QUERY_METRIC_URL_YEAR, QUERY_METRIC_SZ+currency.getCode());
-            query_metric_url_report_full_url = MessageFormat.format(QUERY_METRIC_URL_REPORT, QUERY_METRIC_SZ+currency.getCode());
-        }
-        String resp_year = HTTPUtil.http(query_metric_url_year_full_url, null, "get");
-        System.out.println(query_metric_url_year_full_url+"-->\n"+currency.getCode()+"resp_year:"+resp_year);
-        JSONArray jsonArray_year = JSON.parseArray(resp_year);
-        String resp_report = HTTPUtil.http(query_metric_url_report_full_url, null, "get");
-        JSONArray jsonArray_report = JSON.parseArray(resp_report);
-        if(jsonArray_year.size()<3 || jsonArray_report.size()<3){
+        // 最近的一笔
+        Stroke stroke = Stroke.dao.getLastByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        // 最近一笔必须是向下笔
+        if(stroke.getType() == Stroke.stroke_type_up){
             return false;
         }
-
-        double gsjlr_val = Double.MAX_VALUE;
-        double jqjzcsyl_min = 20.0;
-        for (int i = 0; i < 3; i++) {
-            JSONObject data_year1 = JSON.parseObject(JSON.toJSONString(jsonArray_year.get(i)));
-            double gsjlr = NumUtil.parseNumFromStr(data_year1.getString("gsjlr"));
-            if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<jqjzcsyl_min){
-                return false;
-            }
-            gsjlr_val =gsjlr;
-        }
-        // 比较同比增长
-        JSONObject data_report0 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(0)));
-        JSONObject data_report4 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(4)));
-        // 归属净利润和加权净资产收益率同比下降,误差5%
-        if(NumUtil.parseNumFromStr(data_report0.getString("gsjlr")) < 0.95*NumUtil.parseNumFromStr(data_report4.getString("gsjlr"))|| data_report0.getDoubleValue("jqjzcsyl")<0.95*data_report4.getDoubleValue("jqjzcsyl")){
+        // 计算移动平均值
+        int dayCount = 250;
+        List<Kline> klines = Kline.dao.list250ByDate(currency.getCode(),Kline.KLINE_TYPE_K,stroke.getEndDate(),dayCount);
+        if(klines.size()<250){
             return false;
         }
-
+        // 得到计算的移动平均线的值
+        Double maPoint = MaUtil.calculateMAPoint(klines, dayCount);
+        // 最近一笔最低点必须在移动平均值之下,误差1%
+        if(stroke.getMin()>maPoint*1.01){
+            return false;
+        }
+        List<Kline> last2Klines = Kline.dao.getLast2ByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        // 当前价必须上穿移动平均线
+        if(last2Klines.get(0).getMax()<maPoint || last2Klines.get(1).getMax()>=maPoint){
+            return false;
+        }
         return true;
     }
 

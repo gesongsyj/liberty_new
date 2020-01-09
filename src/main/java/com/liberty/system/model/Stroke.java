@@ -16,6 +16,11 @@ import com.liberty.system.query.StrokeQueryObject;
  */
 @SuppressWarnings("serial")
 public class Stroke extends BaseStroke<Stroke> {
+	// 向上笔
+	public static final String stroke_type_up = "0";
+	// 向下笔
+	public static final String stroke_type_down = "1";
+
 	private boolean fromGap;
 
 	public static final Stroke dao = new Stroke().dao();

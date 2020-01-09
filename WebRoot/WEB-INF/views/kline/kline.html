@@ -69,6 +69,8 @@
 					}, {
 						data : calculateMA(30),
 					}, {
+						data : calculateMA(250),
+					}, {
 						data : strokes,
 					}, {
 						markLine : {
@@ -281,6 +283,16 @@
 					}
 				}
 			}, {
+				name : 'MA250',
+				type : 'line',
+				data : [],
+				smooth : true,
+				lineStyle : {
+					normal : {
+						opacity : 0.5
+					}
+				}
+			}, {
 				"markLine" : {
 					"data" : []
 				},
@@ -397,7 +409,7 @@
 				"show" : true,
 				"top" : "top",
 				"selectedMode" : "multiple",
-				"data" : [ "K", "MA5", "MA10", "MA20", "MA30", "Stroke",
+				"data" : [ "K", "MA5", "MA10", "MA20", "MA30", "MA250", "Stroke",
 						"Line", "MACD", "DIF", "DEA" ],
 				"orient" : "horizontal",
 				"left" : "center"

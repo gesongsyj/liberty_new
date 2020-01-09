@@ -205,8 +205,7 @@ public class KlineController extends BaseController {
 		for (Record record : klineType) {
 			Currency currency = Currency.dao.findByCode(includeCurrencyCode);
 			// 取出最后两条数据,最新的一条数据可能随时变化,新增数据时此条记录先删除
-			List<Kline> lastTwo = Kline.dao.getLastByCode(includeCurrencyCode, record.getStr("key"));
-
+			List<Kline> lastTwo = Kline.dao.getLast2ByCode(includeCurrencyCode, record.getStr("key"));
 			Kline lastKline = null;
 			if (lastTwo == null || lastTwo.size() <= 1) {
 				if (lastTwo.size() == 1) {

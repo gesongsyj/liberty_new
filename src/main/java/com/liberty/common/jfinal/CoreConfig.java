@@ -17,6 +17,7 @@ import com.liberty.common.interceptor.ShiroInterceptor;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolPlugin;
 import com.liberty.system.model.Currency;
 import com.liberty.system.strategy.executor.job.Strategy3Executor;
+import com.liberty.system.strategy.executor.job.Strategy4Executor;
 import net.dreamlu.event.EventPlugin;
 
 import java.util.List;
@@ -130,7 +131,7 @@ public class CoreConfig extends JFinalConfig {
 //		}
 		
 		//执行策略三
-//		Strategy3Executor executor = new Strategy3Executor();
+//		Strategy4Executor executor = new Strategy4Executor();
 //		executor.execute(null);
 //		executor.execute("601318");
 //		List<Currency> allCurrency = Currency.dao.listAll();

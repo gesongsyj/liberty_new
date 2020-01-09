@@ -96,6 +96,7 @@
 							<th>序号
 							<th>股票名称
 							<th>股票代码
+							<th>加入时间
 							<th>满足策略
 							<th>止损线
 							<th>操作
@@ -109,9 +110,10 @@
 						</#if>
 						<#list pageResult.list as p>
 						<tr>
-							<td>${p_index}
+							<td>${p_index+1}
 							<td>${p.name}
 							<td>${p.code}
+							<td>${p.startDate}
 							<td>${p.describe}
 							<#if (p.cutLine)??>
 								<td>${p.cutLine}
