@@ -49,3 +49,6 @@
 	from line
 	order by endDate asc
 #end
+#sql("deleteByCurrencyId")
+    delete from line where currencyId = #para(currencyId)
+#end

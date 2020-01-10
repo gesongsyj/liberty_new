@@ -317,8 +317,8 @@ public class BaseController extends Controller {
 					i--;
 					continue;
 				}
-				if (klines.get(i).getMax() < klines.get(i + 1).getMax()
-						&& klines.get(i).getMin() > klines.get(i + 1).getMin()) {
+				if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
+						&& klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
 					klines.remove(i);
 					i--;
 					continue;
@@ -341,8 +341,8 @@ public class BaseController extends Controller {
 					i--;
 					continue;
 				}
-				if (klines.get(i).getMax() < klines.get(i + 1).getMax()
-						&& klines.get(i).getMin() > klines.get(i + 1).getMin()) {
+				if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
+						&& klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
 					klines.get(i + 1).setMin(klines.get(i).getMin());
 					klines.remove(i);
 					i--;
@@ -361,8 +361,8 @@ public class BaseController extends Controller {
 					i--;
 					continue;
 				}
-				if (klines.get(i).getMax() < klines.get(i + 1).getMax()
-						&& klines.get(i).getMin() > klines.get(i + 1).getMin()) {
+				if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
+						&& klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
 					klines.get(i + 1).setMax(klines.get(i).getMax());
 					klines.remove(i);
 					i--;
@@ -1029,7 +1029,7 @@ public class BaseController extends Controller {
 			if (Shape.dao.isHighShape(kline0, kline1, kline2)) {// 顶分
 				shape = new Shape().setDate(kline1.getDate()).setType("0").setMax(kline1.getMax());
 			} else if (Shape.dao.isLowShape(kline0, kline1, kline2)) {// 底分
-				shape = new Shape().setDate(kline1.getDate()).setType("1").setMin(kline1.getMax());
+				shape = new Shape().setDate(kline1.getDate()).setType("1").setMin(kline1.getMin());
 			} else {
 				continue;
 			}

@@ -98,4 +98,9 @@ public class Kline extends BaseKline<Kline> {
 		List<Kline> list = dao.find(sqlPara);
 		return list;
 	}
+
+    public void deleteByCurrencyId(int currencyId) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId",currencyId));
+		int update = Db.update(sqlPara);
+	}
 }

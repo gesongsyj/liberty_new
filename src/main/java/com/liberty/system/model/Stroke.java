@@ -125,4 +125,8 @@ public class Stroke extends BaseStroke<Stroke> {
 		return list;
 	}
 
+	public void deleteByCurrencyId(int currencyId) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId",currencyId));
+		int update = Db.update(sqlPara);
+	}
 }

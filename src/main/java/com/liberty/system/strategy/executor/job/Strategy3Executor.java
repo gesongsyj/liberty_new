@@ -22,10 +22,15 @@ import java.util.Vector;
 
 /**
  * 查找绩优股
- * 1:归属净利润近三年连续增长
+ * 1:归属净利润近N年连续增长
  * 2:净利润增长率在阈值之上,如:20%
  */
 public class Strategy3Executor extends StrategyExecutor implements Executor {
+    // 判断的年数，连续两年或者三年或者几年
+    private static final int YEAR_COUNT = 2;
+    // 加权净资产收益率的阈值
+    private static final double JQJZCSYL_LIMIT = 25.0;
+
     // 主要指标查询url，type：0-按报告期，1-按年度，2-按单季度；code后面跟SH/SZ+股票代码
     private static final String QUERY_METRIC_URL_YEAR = "http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=1&code={0}";
     private static final String QUERY_METRIC_URL_REPORT = "http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=0&code={0}";
@@ -93,16 +98,15 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
         JSONArray jsonArray_year = JSON.parseArray(resp_year);
         String resp_report = HTTPUtil.http(query_metric_url_report_full_url, null, "get");
         JSONArray jsonArray_report = JSON.parseArray(resp_report);
-        if(jsonArray_year.size()<3 || jsonArray_report.size()<3){
+        if(jsonArray_year.size()<YEAR_COUNT || jsonArray_report.size()<YEAR_COUNT){
             return false;
         }
 
         double gsjlr_val = Double.MAX_VALUE;
-        double jqjzcsyl_min = 20.0;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < YEAR_COUNT; i++) {
             JSONObject data_year1 = JSON.parseObject(JSON.toJSONString(jsonArray_year.get(i)));
             double gsjlr = NumUtil.parseNumFromStr(data_year1.getString("gsjlr"));
-            if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<jqjzcsyl_min){
+            if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<JQJZCSYL_LIMIT){
                 return false;
             }
             gsjlr_val =gsjlr;

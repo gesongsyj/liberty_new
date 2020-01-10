@@ -129,4 +129,7 @@
 	#end
 	order by date desc limit #para(limit)
 #end
+#sql("deleteByCurrencyId")
+    delete from kline where currencyId = #para(currencyId)
+#end
 

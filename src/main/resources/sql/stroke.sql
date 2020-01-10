@@ -100,3 +100,6 @@
 	from stroke
 	order by startDate asc
 #end
+#sql("deleteByCurrencyId")
+    delete from stroke where currencyId = #para(currencyId)
+#end

@@ -53,4 +53,13 @@ public abstract class BaseCurrency<T extends BaseCurrency> extends SuperModel<T>
 		return getStr("currencyType");
 	}
 
+	public T setLastSeoDate(java.util.Date lastSeoDate) {
+		set("lastSeoDate", lastSeoDate);
+		return (T)this;
+	}
+
+	public java.util.Date getLastSeoDate() {
+		return get("lastSeoDate");
+	}
+
 }

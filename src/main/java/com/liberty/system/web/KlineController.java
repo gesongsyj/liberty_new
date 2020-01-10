@@ -305,6 +305,8 @@ public class KlineController extends BaseController {
 	public void createLine(String includeCurrencyCode) {
 		List<Stroke> strokes = null;
 
+		Currency currency = Currency.dao.findByCode(includeCurrencyCode);
+
 		String sql = "select * from dictionary where type='klineType_gp'";
 		List<Record> klineType = Db.find(sql);
 		for (Record record : klineType) {
@@ -329,6 +331,12 @@ public class KlineController extends BaseController {
 				if (0 != strokes.get(0).getStartDate().compareTo(lastLine.getEndDate())) {
 					lastLine.setEndDate(strokes.get(0).getEndDate()).update();
 					strokes.remove(0);
+					if(Line.LINE_TYPE_UP.equals(lastLine.getDirection())){
+						lastLine.setMax(strokes.get(0).getMax());
+					}else{
+						lastLine.setMin(strokes.get(0).getMin());
+					}
+					lastLine.saveOrUpdate(currency.getId(),record.getStr("key"));
 				}
 			}
 			if (strokes.size() >= 3) {

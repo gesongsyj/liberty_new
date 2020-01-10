@@ -79,20 +79,28 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
 
         // 计算移动平均值
         int dayCount = 250;
-        List<Kline> klinesOfStroke = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(2).getStartDate(), dayCount);
-        if (klinesOfStroke.size() < 250) {
+        List<Kline> klinesOfLast3thStroke = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(2).getStartDate(), dayCount);
+        if (klinesOfLast3thStroke.size() < 250) {
             return false;
         }
         // 得到计算的移动平均线的值
-        Double maPointOfStroke = MaUtil.calculateMAPoint(klinesOfStroke, dayCount);
-        // 最近一笔最低点必须在移动平均值之下,误差1%
-        if (last3strokes.get(2).getMin() > maPointOfStroke * 1.01 || last3strokes.get(2).getMax()<maPointOfStroke) {
+        Double maPointOfLast3thStroke = MaUtil.calculateMAPoint(klinesOfLast3thStroke, dayCount);
+        // 最近一笔最低点必须上穿移动平均值之,误差1%
+        if (last3strokes.get(2).getMin() > maPointOfLast3thStroke || last3strokes.get(2).getMax()<maPointOfLast3thStroke) {
             return false;
         }
 
         // 倒数两笔的上下差距不能过大,应该保持大致相当幅度的震荡,因为是同一个最低点,那么只需要比较最高点即可
         double min = Math.min(last3strokes.get(0).getMax(), last3strokes.get(1).getMax());
         if (Math.abs(last3strokes.get(0).getMax() - last3strokes.get(1).getMax()) / min > 0.02) {
+            return false;
+        }
+
+        // 倒数第一笔的最低点在移动平均线之上，最后两笔是V型，这点在移动平均线之上，基本上倒数第三笔之后的K线都在移动平均线之上
+        List<Kline> klinesOfLast1thStroke = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(0).getStartDate(), dayCount);
+        // 得到计算的移动平均线的值
+        Double maPointOfLast1thStroke = MaUtil.calculateMAPoint(klinesOfLast1thStroke, dayCount);
+        if(last3strokes.get(0).getMin()<maPointOfLast1thStroke){
             return false;
         }
 

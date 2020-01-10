@@ -16,6 +16,11 @@ import com.liberty.system.query.StrokeQueryObject;
  */
 @SuppressWarnings("serial")
 public class Line extends BaseLine<Line> {
+	// 向上线段
+	public static final String LINE_TYPE_UP = "0";
+	// 向下线段
+	public static final String LINE_TYPE_DOWN = "1";
+
 	public static final Line dao = new Line().dao();
 	
 	private List<Stroke> allStrokes=new ArrayList<Stroke>();
@@ -93,4 +98,9 @@ public class Line extends BaseLine<Line> {
 		List<Line> list = dao.find(sqlPara);
 		return list;
 	}
+
+    public void deleteByCurrencyId(int currencyId) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId",currencyId));
+		int update = Db.update(sqlPara);
+    }
 }
