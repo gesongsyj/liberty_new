@@ -1060,6 +1060,23 @@ public class BaseController extends Controller {
                         }
                     }
                 }else{
+					if("0".equals(shape.getType())){
+						// 顶分
+						if (shape.getMax() > preShape.getMax()) {
+							preShape.setDate(shape.getDate());
+							preShape.setMax(shape.getMax());
+							startIndex = i + 1;
+							shapeIndex = i;
+						}
+					}else{
+						// 底分
+						if(shape.getMin()<preShape.getMin()){
+							preShape.setDate(shape.getDate());
+							preShape.setMin(shape.getMin());
+							startIndex = i + 1;
+							shapeIndex = i;
+						}
+					}
                     continue;
                 }
             }
@@ -1077,7 +1094,7 @@ public class BaseController extends Controller {
      */
 	private List<Stroke> handleStrokes(List<Shape> shapes,int currencyId,String currencyCode,String type){
 	    List<Stroke> strokes = new ArrayList<>();
-        for (int i = 1; i < shapes.size()-1; i++) {
+        for (int i = 0; i < shapes.size()-1; i++) {
             Stroke stroke = new Stroke();
             stroke.setStartDate(shapes.get(i).getDate());
             stroke.setEndDate(shapes.get(i+1).getDate());
@@ -1138,20 +1155,6 @@ public class BaseController extends Controller {
 	private boolean sameTypeShapeCheck(Shape lastShape,Shape shape){
 		// 分型类型一致
 		if(lastShape.getType().equals(shape.getType())){
-			int shapeIndex;
-			if("0".equals(shape.getType())){
-				// 顶分
-				if (shape.getMax() > lastShape.getMax()) {
-					lastShape.setDate(shape.getDate());
-					lastShape.setMax(shape.getMax());
-				}
-			}else{
-				// 底分
-				if(shape.getMin()<lastShape.getMin()){
-					lastShape.setDate(shape.getDate());
-					lastShape.setMin(shape.getMin());
-				}
-			}
 			return true;
 		}else{
 			return false;

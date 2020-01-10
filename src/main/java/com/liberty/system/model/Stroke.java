@@ -17,9 +17,9 @@ import com.liberty.system.query.StrokeQueryObject;
 @SuppressWarnings("serial")
 public class Stroke extends BaseStroke<Stroke> {
 	// 向上笔
-	public static final String stroke_type_up = "0";
+	public static final String STROKE_TYPE_UP = "0";
 	// 向下笔
-	public static final String stroke_type_down = "1";
+	public static final String STROKE_TYPE_DOWN = "1";
 
 	private boolean fromGap;
 
@@ -92,6 +92,12 @@ public class Stroke extends BaseStroke<Stroke> {
 		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
 		Stroke stroke = dao.findFirst(sqlPara);
 		return stroke;
+	}
+
+	public List<Stroke> getLastSomeByCode(String code, String type,int limit) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("limit",limit));
+		List<Stroke> strokes = dao.find(sqlPara);
+		return strokes;
 	}
 
 	public List<Stroke> listAllByCode(String code, String type) {

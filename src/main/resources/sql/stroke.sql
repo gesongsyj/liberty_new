@@ -23,6 +23,21 @@
 	order by endDate desc
 #end
 
+#sql("getLastSomeByCode")
+	select s.*
+	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") s.type = #para(type)
+		#set(flag=1)
+	#end
+	order by endDate desc limit #para(limit)
+#end
+
 #sql("listAllByCode")
 	select s.*
 	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id

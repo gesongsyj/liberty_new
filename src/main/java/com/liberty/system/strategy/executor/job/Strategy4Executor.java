@@ -1,15 +1,9 @@
 package com.liberty.system.strategy.executor.job;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfplugin.mail.MailKit;
-import com.liberty.common.utils.HTTPUtil;
-import com.liberty.common.utils.MaUtil;
-import com.liberty.common.utils.MailUtil;
-import com.liberty.common.utils.NumUtil;
+import com.liberty.common.utils.*;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;
@@ -17,7 +11,6 @@ import com.liberty.system.model.Strategy;
 import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.executor.Executor;
 
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -65,7 +58,7 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
         if (stayCurrency.size() != 0) {
             MailUtil.sendMailToBuy(stayCurrency, super.getStrategy());
         }
-        System.out.println("策略3执行完毕!");
+        System.out.println("策略4执行完毕!");
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
         MailKit.send("530256489@qq.com", null, "策略[" + strategy.getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
@@ -74,27 +67,42 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        // 最近的一笔
-        Stroke stroke = Stroke.dao.getLastByCode(currency.getCode(), Kline.KLINE_TYPE_K);
-        // 最近一笔必须是向下笔
-        if(stroke.getType() == Stroke.stroke_type_up){
+        // 获取最近的三笔,倒序
+        List<Stroke> last3strokes = Stroke.dao.getLastSomeByCode(currency.getCode(), Kline.KLINE_TYPE_K, 3);
+        if (last3strokes.size() < 3) {
             return false;
         }
+        // 倒数第三笔方向不能向下
+        if (Stroke.STROKE_TYPE_DOWN.equals(last3strokes.get(2).getDirection())) {
+            return false;
+        }
+
         // 计算移动平均值
         int dayCount = 250;
-        List<Kline> klines = Kline.dao.list250ByDate(currency.getCode(),Kline.KLINE_TYPE_K,stroke.getEndDate(),dayCount);
-        if(klines.size()<250){
+        List<Kline> klinesOfStroke = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(2).getStartDate(), dayCount);
+        if (klinesOfStroke.size() < 250) {
             return false;
         }
         // 得到计算的移动平均线的值
-        Double maPoint = MaUtil.calculateMAPoint(klines, dayCount);
+        Double maPointOfStroke = MaUtil.calculateMAPoint(klinesOfStroke, dayCount);
         // 最近一笔最低点必须在移动平均值之下,误差1%
-        if(stroke.getMin()>maPoint*1.01){
+        if (last3strokes.get(2).getMin() > maPointOfStroke * 1.01 || last3strokes.get(2).getMax()<maPointOfStroke) {
             return false;
         }
-        List<Kline> last2Klines = Kline.dao.getLast2ByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+
+        // 倒数两笔的上下差距不能过大,应该保持大致相当幅度的震荡,因为是同一个最低点,那么只需要比较最高点即可
+        double min = Math.min(last3strokes.get(0).getMax(), last3strokes.get(1).getMax());
+        if (Math.abs(last3strokes.get(0).getMax() - last3strokes.get(1).getMax()) / min > 0.02) {
+            return false;
+        }
+
+        // 计算当前点的移动平均线
+        List<Kline> klinesOfToday = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, DateUtil.strDate(DateUtil.getDay(), "yyyy-MM-dd"), dayCount);
+        // 得到计算的移动平均线的值
+        Double maPointOfToday = MaUtil.calculateMAPoint(klinesOfToday, dayCount);
+        Kline last1 = Kline.dao.getLastOneByCode(currency.getCode(), Kline.KLINE_TYPE_K);
         // 当前价必须上穿移动平均线
-        if(last2Klines.get(0).getMax()<maPoint || last2Klines.get(1).getMax()>=maPoint){
+        if (last1.getMax() < maPointOfToday) {
             return false;
         }
         return true;
