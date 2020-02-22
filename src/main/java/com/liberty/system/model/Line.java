@@ -1,6 +1,7 @@
 package com.liberty.system.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
@@ -83,6 +84,12 @@ public class Line extends BaseLine<Line> {
 
 	public Line getLastByCode(String code, String type) {
 		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
+		Line line = dao.findFirst(sqlPara);
+		return line;
+	}
+
+	public Line getLastBeforeDate(String code, String type, Date date) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date",date));
 		Line line = dao.findFirst(sqlPara);
 		return line;
 	}

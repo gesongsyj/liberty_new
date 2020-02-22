@@ -23,6 +23,9 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 
+/**
+ * unused
+ */
 public class HTTPUtils {
 
 	private final static Logger logger = LogManager.getLogger("");

@@ -29,6 +29,25 @@
 	order by endDate desc
 #end
 
+#sql("getLastBeforeDate")
+	select l.*
+	from line l join currency c on l.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") l.type = #para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") l.endDate <= #para(date)
+		#set(flag=1)
+	#end
+	order by endDate desc
+#end
+
 #sql("listAllByCode")
 	select l.*
 	from line l join currency c on l.currencyId=c.id

@@ -1,12 +1,15 @@
 package com.liberty.system.downloader.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.json.Json;
 import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.liberty.common.utils.HTTPUtils;
 import com.liberty.system.downloader.CurrencyKit;
 import com.liberty.system.model.Currency;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,29 +47,57 @@ public class CurrencyKit_Gp implements CurrencyKit {
 		List<String> Strs = JSON.parseArray(res, String.class);
 		for (String string : Strs) {
 			String[] split = string.split(",");
-			Currency currency = new Currency();
 			Currency c = Currency.dao.findByCode(split[1]);
+			String code = split[1];
+			double tatalStockCount = queryTotalStockCount(code);
 			if(c!=null){
+
 				// 判断名称是否有变化
-				if(c.getName().equals(split[2])){
+				if(c.getName().equals(split[2]) && null!=c.getTotalStockCount() && c.getTotalStockCount() == tatalStockCount){
 					continue;
 				}else{
 					c.setName(split[2]);
+					c.setTotalStockCount(tatalStockCount);
 					c.update();
 				}
-			}
-			String code = split[1];
-			currency.setCode(code);
-			currency.setName(split[2]);
-			if(code.startsWith("0")){
-				currency.setCurrencyType(Currency.CURRENCY_TYPE_SZ);
-			}else if(code.startsWith("6")){
-				currency.setCurrencyType(Currency.CURRENCY_TYPE_SH);
 			}else{
-				currency.setCurrencyType(Currency.CURRENCY_TYPE_KCB);
+				c = new Currency();
+				c.setCode(code);
+				c.setName(split[2]);
+				if(code.startsWith("6")){
+					c.setCurrencyType(Currency.CURRENCY_TYPE_SH);
+				}else{
+					c.setCurrencyType(Currency.CURRENCY_TYPE_SZ);
+				}
+				c.setTotalStockCount(tatalStockCount);
+				cs.add(c);
+				c.save();
 			}
-			cs.add(currency);
-			currency.save();
 		}
 	}
+
+	/**
+	 * 查询总股本数
+	 * @param currencyCode
+	 * @return
+	 */
+	public static double queryTotalStockCount(String currencyCode){
+		String query_url = "http://push2.eastmoney.com/api/qt/stock/get?fields=f85&secid={0}.{1}&cb=jQuery112306531710165462696_{2}&_={3}";
+		long timeMillis = System.currentTimeMillis();
+		if(currencyCode.startsWith("0")){
+			query_url=MessageFormat.format(query_url,"0",currencyCode,timeMillis,timeMillis);
+		}else if(currencyCode.startsWith("6")){
+			query_url=MessageFormat.format(query_url,"1",currencyCode,timeMillis,timeMillis);
+		}else{
+			query_url=MessageFormat.format(query_url,"0",currencyCode,timeMillis,timeMillis);
+		}
+		String res = HTTPUtils.http(query_url, null, "get");
+		res=res.substring(res.indexOf("(")+1, res.lastIndexOf(")"));
+		JSONObject jsonObject_data = JSON.parseObject(res);
+		Object dataObj = jsonObject_data.get("data");
+		JSONObject jsonObject_f85 = JSON.parseObject(JSON.toJSONString(dataObj));
+		double f85 = jsonObject_f85.getDoubleValue("f85");
+		return f85;
+	}
+
 }

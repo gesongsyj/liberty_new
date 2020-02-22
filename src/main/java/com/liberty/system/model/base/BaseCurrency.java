@@ -9,57 +9,75 @@ import com.jfinal.plugin.activerecord.IBean;
 public abstract class BaseCurrency<T extends BaseCurrency> extends SuperModel<T> implements IBean {
 
 	public T setId(java.lang.Integer id) {
-		set("id", id);
-		return (T)this;
-	}
-	
-	public java.lang.Integer getId() {
-		return getInt("id");
-	}
+        set("id", id);
+        return (T) this;
+    }
 
-	public T setCode(java.lang.String code) {
-		set("code", code);
-		return (T)this;
-	}
-	
-	public java.lang.String getCode() {
-		return getStr("code");
-	}
+    public java.lang.Integer getId() {
+        return getInt("id");
+    }
 
-	public T setName(java.lang.String name) {
-		set("name", name);
-		return (T)this;
-	}
-	
-	public java.lang.String getName() {
-		return getStr("name");
-	}
+    public T setCode(java.lang.String code) {
+        set("code", code);
+        return (T) this;
+    }
 
-	public T setFollowed(java.lang.Boolean followed) {
-		set("followed", followed);
-		return (T)this;
-	}
-	
-	public java.lang.Boolean getFollowed() {
-		return get("followed");
-	}
+    public java.lang.String getCode() {
+        return getStr("code");
+    }
 
-	public T setCurrencyType(java.lang.String currencyType) {
-		set("currencyType", currencyType);
-		return (T)this;
-	}
-	
-	public java.lang.String getCurrencyType() {
-		return getStr("currencyType");
-	}
+    public T setName(java.lang.String name) {
+        set("name", name);
+        return (T) this;
+    }
 
-	public T setLastSeoDate(java.util.Date lastSeoDate) {
-		set("lastSeoDate", lastSeoDate);
-		return (T)this;
-	}
+    public java.lang.String getName() {
+        return getStr("name");
+    }
 
-	public java.util.Date getLastSeoDate() {
-		return get("lastSeoDate");
-	}
+    public T setFollowed(java.lang.Boolean followed) {
+        set("followed", followed);
+        return (T) this;
+    }
+
+    public java.lang.Boolean getFollowed() {
+        return get("followed");
+    }
+
+    public T setCurrencyType(java.lang.String currencyType) {
+        set("currencyType", currencyType);
+        return (T) this;
+    }
+
+    public java.lang.String getCurrencyType() {
+        return getStr("currencyType");
+    }
+
+    public T setLastSeoDate(java.util.Date lastSeoDate) {
+        set("lastSeoDate", lastSeoDate);
+        return (T) this;
+    }
+
+    public java.util.Date getLastSeoDate() {
+        return get("lastSeoDate");
+    }
+
+    public T setTotalStockCount(java.lang.Double totalStockCount) {
+        set("totalStockCount", totalStockCount);
+        return (T)this;
+    }
+
+    public java.lang.Double getTotalStockCount() {
+        return getDouble("totalStockCount");
+    }
+
+    public T setFollowedDate(java.util.Date followedDate) {
+        set("followedDate", followedDate);
+        return (T) this;
+    }
+
+    public java.util.Date getFollowedDate() {
+        return get("followedDate");
+    }
 
 }

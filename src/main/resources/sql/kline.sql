@@ -23,6 +23,25 @@
 	order by k.date desc
 #end
 
+#sql("getLastOneByCodeAndDate")
+	select k.*
+	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code=#para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") k.type=#para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") k.date <=#para(date)
+		#set(flag=1)
+	#end
+	order by k.date desc
+#end
+
 #sql("getLast2ByCode")
 	select k.*
 	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
@@ -54,7 +73,26 @@
 	order by date asc
 #end
 
-#sql("getListByDate")
+#sql("listAllByCodeBeforeDate")
+	select k.*
+	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") k.type = #para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") k.date <= #para(date)
+		#set(flag=1)
+	#end
+	order by date asc
+#end
+
+#sql("getListAfterDate")
 	select k.*
 	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
 	#set(flag=0)
@@ -96,12 +134,6 @@
 	order by date asc
 #end
 
-#sql("listAll")
-	select *
-	from kline
-	order by date asc
-#end
-
 #sql("getByCurrencyId")
 	select *
 	from kline 
@@ -111,7 +143,7 @@
 		#set(flag=1)
 	#end
 #end
-#sql("list250ByDate")
+#sql("listBeforeDate")
 	select k.*
 	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
 	#set(flag=0)
@@ -132,4 +164,20 @@
 #sql("deleteByCurrencyId")
     delete from kline where currencyId = #para(currencyId)
 #end
-
+#sql("getByDate")
+	select k.*
+	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") k.type = #para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") k.date = #para(date)
+		#set(flag=1)
+	#end
+#end

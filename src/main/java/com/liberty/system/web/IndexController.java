@@ -1,5 +1,10 @@
 package com.liberty.system.web;
 
+import com.liberty.common.utils.DateUtil;
+import com.liberty.system.model.Kline;
+import com.liberty.system.strategy.agent.AgentSyn;
+import com.liberty.system.strategy.agent.impl.BoxBreakStrategyAgent;
+import com.liberty.system.strategy.agent.impl.MaFittingLineStrategyAgent;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -17,6 +22,8 @@ import com.liberty.common.utils.ResultStatusCode;
 import com.liberty.common.web.BaseController;
 import com.liberty.system.model.Currency;
 import com.liberty.system.query.CurrencyQueryObject;
+
+import java.util.Date;
 
 /**
  * 登录管理
@@ -100,6 +107,18 @@ public class IndexController extends BaseController {
 
 	public void home() {
 		render("home/index.html");
+	}
+
+	public void test(){
+		AgentSyn agentSyn = new BoxBreakStrategyAgent();
+//		agentSyn.execute();
+		agentSyn.calibrateCustomize(DateUtil.strDate("2019-12-02","yyyy-MM-dd"),DateUtil.strDate("2020-02-16","yyyy-MM-dd"),Kline.KLINE_TYPE_K);
+
+//		AgentSyn agentSyn = new MaFittingLineStrategyAgent();
+//		agentSyn.execute();
+//		agentSyn.calibrateCustomize(DateUtil.strDate("2019-01-01","yyyy-MM-dd"),DateUtil.strDate("2020-02-19","yyyy-MM-dd"), Kline.KLINE_TYPE_K);
+
+		renderText("当前时间:"+new Date().toLocaleString());
 	}
 
 }

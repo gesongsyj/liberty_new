@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.HTTPUtil;
 import com.liberty.common.utils.HTTPUtils;
+import com.liberty.common.utils.NumUtil;
 import com.liberty.system.downloader.DownLoader;
 import com.liberty.system.model.*;
 
@@ -40,7 +41,7 @@ public class DfcfDownLoader implements DownLoader {
 	}
 
 	@Override
-	public List<Kline> downLoad(Currency currency, String type, String method, Date lastDate) {
+	public List<Kline> downLoad(Currency currency, String type, String method, Kline lastKline) {
 		Date lastSeoDate = queryLastSeoDate(currency);
 
 		if(null != lastSeoDate){
@@ -49,7 +50,7 @@ public class DfcfDownLoader implements DownLoader {
 				Line.dao.deleteByCurrencyId(currency.getId());
 				Stroke.dao.deleteByCurrencyId(currency.getId());
 				Kline.dao.deleteByCurrencyId(currency.getId());
-				lastDate = null;
+				lastKline = null;
 
 				currency.setLastSeoDate(lastSeoDate);
 				currency.update();
@@ -57,16 +58,17 @@ public class DfcfDownLoader implements DownLoader {
 		}
 
 		// "&authorityType="表示不复权;"&authorityType=fa"表示前复权
-		String url = "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=6&id=" + currency.getCode()
+		String url = "http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?rtntype=5&id=" + currency.getCode()
 				+ currency.getCurrencyType() + "&type=" + type + "&authorityType=fa&_=" + System.currentTimeMillis();
 		System.out.println(url);
 		String response = HTTPUtils.http(url, null, method);
+		System.out.println("response:"+response);
 		response = response.substring(response.indexOf("(") + 1, response.lastIndexOf(")"));
 		Map responseMap = JSON.parseObject(response, Map.class);
 		Object data = responseMap.get("data");
 		List<String> dataArr = JSON.parseArray(data.toString(), String.class);
 		List<Kline> klines = new ArrayList<Kline>();
-		if (lastDate == null) {
+		if (lastKline == null) {
 			for (int i = dataArr.size() - 1; i >= 0; i--) {
 				String[] str = dataArr.get(i).split(",");
 				Date date = null;
@@ -81,6 +83,11 @@ public class DfcfDownLoader implements DownLoader {
 				kline.setClose(Double.valueOf(str[2]));
 				kline.setMax(Double.valueOf(str[3]));
 				kline.setMin(Double.valueOf(str[4]));
+				kline.setVolume(NumUtil.parseNumFromStr(str[5]));
+				kline.setTurnover(NumUtil.parseNumFromStr(str[6]));
+				kline.setTurnoverRate(kline.getVolume()*100/currency.getTotalStockCount());
+				kline.setCurrencyId(currency.getId());
+				kline.setType(type);
 				klines.add(kline);
 			}
 		} else {
@@ -92,13 +99,18 @@ public class DfcfDownLoader implements DownLoader {
 				} else {
 					date = DateUtil.strDate(str[0], "yyyy-MM-dd");
 				}
-				if (date.getTime() > lastDate.getTime()) {
+				if (date.getTime() > lastKline.getDate().getTime()) {
 					Kline kline = new Kline();
 					kline.setDate(date);
 					kline.setOpen(Double.valueOf(str[1]));
 					kline.setClose(Double.valueOf(str[2]));
 					kline.setMax(Double.valueOf(str[3]));
 					kline.setMin(Double.valueOf(str[4]));
+					kline.setVolume(NumUtil.parseNumFromStr(str[5]));
+					kline.setTurnover(NumUtil.parseNumFromStr(str[6]));
+					kline.setTurnoverRate(kline.getVolume()*100/currency.getTotalStockCount());
+					kline.setCurrencyId(currency.getId());
+					kline.setType(type);
 					klines.add(kline);
 				} else {
 					break;
@@ -167,6 +179,9 @@ public class DfcfDownLoader implements DownLoader {
 			kline.setClose(Double.valueOf(str[2]));
 			kline.setMax(Double.valueOf(str[3]));
 			kline.setMin(Double.valueOf(str[4]));
+			kline.setVolume(Double.valueOf(str[5]));
+			kline.setTurnover(Double.valueOf(str[6]));
+			kline.setTurnoverRate(Double.valueOf(str[5])*100/currency.getTotalStockCount());
 			klines.add(kline);
 		}
 		Collections.reverse(klines);

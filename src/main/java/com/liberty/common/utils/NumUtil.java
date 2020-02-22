@@ -8,6 +8,9 @@ public class NumUtil {
      */
     public static double parseNumFromStr(String inputStr){
         double output;
+        if(inputStr.contains("-")){
+            return 0.0;
+        }
         if(inputStr.contains("亿")){
             String num = inputStr.replaceAll("亿", "");
             output = Double.valueOf(num)*10000*10000;

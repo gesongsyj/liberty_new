@@ -66,7 +66,7 @@ public class Strategy2Executor extends StrategyExecutor implements Executor {
 		} else {
 			storeLines.add(lastLine);
 			Date date = lastLine.getEndDate();
-			strokes = Stroke.dao.getListByDate(currency.getCode(), "k", date);
+			strokes = Stroke.dao.listAfterByEndDate(currency.getCode(), "k", date);
 			if (strokes == null || strokes.size() == 0) {
 				return false;
 			}

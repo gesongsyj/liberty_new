@@ -1,5 +1,7 @@
 #sql("paginate")
-	select c.*,cs.id as csid
+	select
+	c.*,
+	max(cs.id) as csid
 	from currency c left join currency_strategy cs on cs.currencyId=c.id
 	#set(flag=0)
 	#if(qo.keyword)
@@ -10,6 +12,7 @@
 		#(flag==0?"where":"and") followed=1
 		#set(flag=1)
 	#end
+	group by c.id
 #end
 
 #sql("paginateToBuy")
@@ -55,4 +58,8 @@
 
 #sql("listForStrategy")
 	select * from currency c join currency_strategy cs on cs.currencyId=c.id
+#end
+
+#sql("listFollowed")
+	select * from currency c where followed = 1
 #end

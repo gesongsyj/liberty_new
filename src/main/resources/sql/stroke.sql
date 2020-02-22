@@ -53,7 +53,7 @@
 	order by startDate asc
 #end
 
-#sql("getListByDate")
+#sql("listAfterByEndDate")
 	select s.*
 	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
 	#set(flag=0)
@@ -102,4 +102,40 @@
 #end
 #sql("deleteByCurrencyId")
     delete from stroke where currencyId = #para(currencyId)
+#end
+#sql("getLastBeforeDate")
+	select s.*
+	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") s.type = #para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") s.endDate <= #para(date)
+		#set(flag=1)
+	#end
+	order by endDate desc
+#end
+#sql("listBeforeByEndDate")
+	select s.*
+	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+	#set(flag=0)
+	#if(code)
+		#(flag==0?"where":"and") c.code = #para(code)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") s.type = #para(type)
+		#set(flag=1)
+	#end
+	#if(date)
+		#(flag==0?"where":"and") s.endDate <= #para(date)
+		#set(flag=1)
+	#end
+	order by endDate asc
 #end

@@ -1,15 +1,10 @@
 package com.liberty.system.strategy.cuttor;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfplugin.mail.MailKit;
 import com.liberty.common.utils.MailUtil;
-import com.liberty.common.web.BaseController;
 import com.liberty.system.downloader.DownLoader;
 import com.liberty.system.downloader.impl.DfcfDownLoader;
 import com.liberty.system.model.Currency;
@@ -28,7 +23,8 @@ public class LossCuttor{
 		for (Record record : rs) {
 			Currency currency = Currency.dao.findById(record.getInt("currencyId"));
 			Strategy strategy = Strategy.dao.findById(record.getInt("strategyId"));
-			List<Kline> klines = downLoader.downLoad(currency, "k", "get", record.getDate("startDate"));
+			List<Kline> klinesDate = Kline.dao.getListAfterDate(currency.getCode(), Kline.KLINE_TYPE_K, record.getDate("startDate"));
+			List<Kline> klines = downLoader.downLoad(currency, "k", "get", klinesDate.get(klinesDate.size()-1));
 			for (Kline kline : klines) {
 				if(kline.getMin()<record.getDouble("cutLine")) {
 					MailUtil.sendMailToSale(currency, strategy, record.getDouble("cutLine"),record.getInt("csId"));

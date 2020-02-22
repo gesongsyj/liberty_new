@@ -20,6 +20,8 @@ import java.util.Vector;
  * 前一笔的最低点在250日均线下,目前股价上穿站稳250日均线
  */
 public class Strategy4Executor extends StrategyExecutor implements Executor {
+    // 上穿250日均线的笔涨幅达标阈值
+    public static final double STROKE_GAIN_LIMIT = 0.2;
 
     public Strategy4Executor() {
         this.strategy = Strategy.dao.findById(4);
@@ -67,52 +69,42 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        // 获取最近的三笔,倒序
-        List<Stroke> last3strokes = Stroke.dao.getLastSomeByCode(currency.getCode(), Kline.KLINE_TYPE_K, 3);
-        if (last3strokes.size() < 3) {
+        // 获取最后一笔
+        Stroke last1ByCode = Stroke.dao.getLastByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        if(null == last1ByCode){
             return false;
         }
-        // 倒数第三笔方向不能向下
-        if (Stroke.STROKE_TYPE_DOWN.equals(last3strokes.get(2).getDirection())) {
+        // 最后一笔不能向上
+        if(Stroke.STROKE_TYPE_UP.equals(last1ByCode.getDirection())){
             return false;
         }
 
         // 计算移动平均值
         int dayCount = 250;
-        List<Kline> klinesOfLast3thStroke = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(2).getStartDate(), dayCount);
-        if (klinesOfLast3thStroke.size() < 250) {
+        List<Kline> klinesOfLast1Stroke = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last1ByCode.getEndDate(), dayCount);
+        if (klinesOfLast1Stroke.size() < 250) {
             return false;
         }
         // 得到计算的移动平均线的值
-        Double maPointOfLast3thStroke = MaUtil.calculateMAPoint(klinesOfLast3thStroke, dayCount);
-        // 最近一笔最低点必须上穿移动平均值之,误差1%
-        if (last3strokes.get(2).getMin() > maPointOfLast3thStroke || last3strokes.get(2).getMax()<maPointOfLast3thStroke) {
+        Double maPointOfLast1Stroke = MaUtil.calculateMAPoint(klinesOfLast1Stroke, dayCount);
+        // 最后一笔的最小值必须在移动平均值之下
+        if(last1ByCode.getMin()>maPointOfLast1Stroke){
             return false;
         }
 
-        // 倒数两笔的上下差距不能过大,应该保持大致相当幅度的震荡,因为是同一个最低点,那么只需要比较最高点即可
-        double min = Math.min(last3strokes.get(0).getMax(), last3strokes.get(1).getMax());
-        if (Math.abs(last3strokes.get(0).getMax() - last3strokes.get(1).getMax()) / min > 0.02) {
-            return false;
-        }
-
-        // 倒数第一笔的最低点在移动平均线之上，最后两笔是V型，这点在移动平均线之上，基本上倒数第三笔之后的K线都在移动平均线之上
-        List<Kline> klinesOfLast1thStroke = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(0).getStartDate(), dayCount);
-        // 得到计算的移动平均线的值
-        Double maPointOfLast1thStroke = MaUtil.calculateMAPoint(klinesOfLast1thStroke, dayCount);
-        if(last3strokes.get(0).getMin()<maPointOfLast1thStroke){
-            return false;
-        }
-
-        // 计算当前点的移动平均线
-        List<Kline> klinesOfToday = Kline.dao.list250ByDate(currency.getCode(), Kline.KLINE_TYPE_K, DateUtil.strDate(DateUtil.getDay(), "yyyy-MM-dd"), dayCount);
-        // 得到计算的移动平均线的值
-        Double maPointOfToday = MaUtil.calculateMAPoint(klinesOfToday, dayCount);
+        // 当前K线
         Kline last1 = Kline.dao.getLastOneByCode(currency.getCode(), Kline.KLINE_TYPE_K);
-        // 当前价必须上穿移动平均线
-        if (last1.getMax() < maPointOfToday) {
+        if(last1.getDiff()<0 || last1.getDea()<0){
             return false;
         }
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last1.getDate(), dayCount);
+        // 得到计算的移动平均线的值
+        Double maPointOfKlines = MaUtil.calculateMAPoint(klines, dayCount);
+        // 当前K线的最高点必须在移动平均值之上
+        if(last1.getMax()<maPointOfKlines){
+            return false;
+        }
+
         return true;
     }
 

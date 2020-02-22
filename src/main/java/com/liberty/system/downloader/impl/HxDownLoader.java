@@ -50,7 +50,7 @@ public class HxDownLoader implements DownLoader {
 	}
 
 	@Override
-	public List<Kline> downLoad(Currency currency, String type, String method, Date lastDate) {
+	public List<Kline> downLoad(Currency currency, String type, String method, Kline lastKline) {
 		Map<String, String> params = new HashMap<String, String>();
 		List<Kline> klineList = new ArrayList<Kline>();
 		String response = "";
@@ -63,14 +63,14 @@ public class HxDownLoader implements DownLoader {
 		params.put("start", tomorrowFormat + "080000");
 		params.put("type", paramTypeMap.get(type));// K线级别
 		params.put("code", "FOREX" + currency.getCode());// 设置code参数
-		if (lastDate == null) {
+		if (lastKline.getDate() == null) {
 			if (paramTypeMap.get(type) == null) {
 				return null;// 没有该级别K线的数据
 			} else {
 				params.put("number", klineTypeNumberMap.get(type) == null ? "-1000" : klineTypeNumberMap.get(type));
 			}
 		} else {
-			long between = DateUtil.getNumberBetween(DateUtil.getNextDay(now), lastDate, klineTypeBetweenMap.get(type));
+			long between = DateUtil.getNumberBetween(DateUtil.getNextDay(now), lastKline.getDate(), klineTypeBetweenMap.get(type));
 			String number = String.valueOf(between);
 			params.put("number", "-" + number);
 			// params.put("number", "-" + "10");//测试

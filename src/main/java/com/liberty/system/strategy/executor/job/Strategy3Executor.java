@@ -26,10 +26,12 @@ import java.util.Vector;
  * 2:净利润增长率在阈值之上,如:20%
  */
 public class Strategy3Executor extends StrategyExecutor implements Executor {
-    // 判断的年数，连续两年或者三年或者几年
-    private static final int YEAR_COUNT = 2;
-    // 加权净资产收益率的阈值
-    private static final double JQJZCSYL_LIMIT = 25.0;
+    // 判断年数
+    private Integer JUDGE_YEAR_COUNT = 2;
+    // 净资产收益率阈值
+    private Double JZCSYL_LIMIT = 25.0;
+    // 允许的误差范围
+    private Double ERROR_RANGE_LIMIT = 0.05;
 
     // 主要指标查询url，type：0-按报告期，1-按年度，2-按单季度；code后面跟SH/SZ+股票代码
     private static final String QUERY_METRIC_URL_YEAR = "http://f10.eastmoney.com/NewFinanceAnalysis/MainTargetAjax?type=1&code={0}";
@@ -98,15 +100,15 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
         JSONArray jsonArray_year = JSON.parseArray(resp_year);
         String resp_report = HTTPUtil.http(query_metric_url_report_full_url, null, "get");
         JSONArray jsonArray_report = JSON.parseArray(resp_report);
-        if(jsonArray_year.size()<YEAR_COUNT || jsonArray_report.size()<YEAR_COUNT){
+        if(jsonArray_year.size()<JUDGE_YEAR_COUNT || jsonArray_report.size()<JUDGE_YEAR_COUNT){
             return false;
         }
 
         double gsjlr_val = Double.MAX_VALUE;
-        for (int i = 0; i < YEAR_COUNT; i++) {
+        for (int i = 0; i < JUDGE_YEAR_COUNT; i++) {
             JSONObject data_year1 = JSON.parseObject(JSON.toJSONString(jsonArray_year.get(i)));
             double gsjlr = NumUtil.parseNumFromStr(data_year1.getString("gsjlr"));
-            if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<JQJZCSYL_LIMIT){
+            if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<JZCSYL_LIMIT){
                 return false;
             }
             gsjlr_val =gsjlr;
@@ -115,7 +117,7 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
         JSONObject data_report0 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(0)));
         JSONObject data_report4 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(4)));
         // 归属净利润和加权净资产收益率同比下降,误差5%
-        if(NumUtil.parseNumFromStr(data_report0.getString("gsjlr")) < 0.95*NumUtil.parseNumFromStr(data_report4.getString("gsjlr"))|| data_report0.getDoubleValue("jqjzcsyl")<0.95*data_report4.getDoubleValue("jqjzcsyl")){
+        if(NumUtil.parseNumFromStr(data_report0.getString("gsjlr")) < (1-ERROR_RANGE_LIMIT)*NumUtil.parseNumFromStr(data_report4.getString("gsjlr"))|| data_report0.getDoubleValue("jqjzcsyl")<0.95*data_report4.getDoubleValue("jqjzcsyl")){
             return false;
         }
 

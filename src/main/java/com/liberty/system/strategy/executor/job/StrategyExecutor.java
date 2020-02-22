@@ -33,10 +33,11 @@ public abstract class StrategyExecutor {
 		for (int i = 0; i < cs.size(); i++) {
 			List<Future> futureList = new ArrayList<>();
 			for (int j = 0; j < queueSize && i < cs.size(); j++, i++) {
-				Currency currency = cs.get(i);
+				int index = i;
 				Future<?> future = executor.submit(new Runnable() {
 					@Override
 					public void run() {
+						Currency currency = cs.get(index);
 						if (executeSingle(currency)) {
 							System.err.println("满足策略:" + currency.getCode() + ":" + currency.getName());
 							if (notExistsRecord(currency)) {
@@ -56,6 +57,7 @@ public abstract class StrategyExecutor {
 					}
 				});
 				futureList.add(future);
+				System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
 			}
 			for (Future future : futureList) {
 				try {

@@ -13,10 +13,10 @@ public interface DownLoader {
 	 * @param currency
 	 * @param type
 	 * @param method
-	 * @param date
+	 * @param lastKline
 	 * @return
 	 */
-	List<Kline> downLoad(Currency currency, String type, String method, Date date);
+	List<Kline> downLoad(Currency currency, String type, String method, Kline lastKline);
 	/**
 	 * 根据size下载一定数量的k线
 	 * @param currency

@@ -1,7 +1,8 @@
-package com.liberty.system.web;
+package com.liberty.system.web.routine;
 
 import java.util.List;
 
+import com.liberty.system.web.KlineController;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -24,6 +25,8 @@ public class RoutineController1 extends BaseController implements Job {
 		KlineController klineController = new KlineController();
 		List<Currency> listAll = Currency.dao.listAll();
 		klineController.multiProData(listAll);
+		// 处理标记
+		klineController.handleFollowed();
 	}
 
 }

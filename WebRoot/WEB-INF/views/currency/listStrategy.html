@@ -122,9 +122,9 @@
 							</#if>
 							<td><a class="btn btn-primary" href="../kline/charts?currencyId=${p.id}" role="button" target="_Blank">查看图表</a>
 								<#if (p.followed)?? && p.followed>
-									<a class="btn btn-danger" href="../currency/addFollowForStarage?currencyId=${p.id}&followed=false&qo.currentPage=${qo.currentPage}&qo.name=${(qo.name)!''}&qo.code=${(qo.code)!''}" role="button">取消标记</a>
+									<a class="btn btn-danger" href="../currency/addFollowForStarage?currencyId=${p.id}&followed=false&qo.currentPage=${qo.currentPage}&qo.keyword=${(qo.keyword)!''}&qo.strategyId=${(qo.strategyId)!''}" role="button">取消标记</a>
 								<#else>
-									<a class="btn btn-success" href="../currency/addFollowForStarage?currencyId=${p.id}&followed=true&qo.currentPage=${qo.currentPage}&qo.name=${(qo.name)!''}&qo.code=${(qo.code)!''}" role="button">添加标记</a>
+									<a class="btn btn-success" href="../currency/addFollowForStarage?currencyId=${p.id}&followed=true&qo.currentPage=${qo.currentPage}&qo.keyword=${(qo.keyword)!''}&qo.strategyId=${(qo.strategyId)!''}" role="button">添加标记</a>
 								</#if>
 								<a class="btn btn-danger" href="../currency/removeFromStrategy?csId=${p.csId}&qo.currentPage=${qo.currentPage}" role="button" target="_Blank">移出策略池</a>
 								<button type="button" class="btn btn-success"

@@ -6,6 +6,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.HTTPUtils;
 import com.liberty.common.utils.ResultMsg;
 import com.liberty.common.utils.ResultStatusCode;
@@ -51,7 +52,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 统一更新数据库所有股票的数据
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void updateData() {
 		KlineController klineController = new KlineController();
 		List<Currency> listAll = Currency.dao.listAll();
@@ -63,7 +64,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 统一更新策略池所有股票的数据
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void updateStrategtData() {
 		KlineController klineController = new KlineController();
 		List<Currency> listAll = Currency.dao.listForStrategy();
@@ -95,6 +96,7 @@ public class CurrencyController extends BaseController {
 		String followed = paras.get("followed");
 		Currency currency = Currency.dao.findById(currencyId);
 		currency.setFollowed(Boolean.valueOf(followed));
+		currency.setFollowedDate(DateUtil.strDate(DateUtil.getDay(),"yyyy-MM-dd"));
 		currency.update();
 		redirect("/currency/list", true);
 	}
@@ -195,6 +197,8 @@ public class CurrencyController extends BaseController {
 //		currency.setName(paras.get("name"));
 //		currency.setCurrencyType(paras.get("currencyType"));
 //		currency.save();
+		double tatalStockCount = CurrencyKit_Gp.queryTotalStockCount(c.getCode());
+		c.setTotalStockCount(tatalStockCount);
 		c.save();
 
 		KlineController klineController = new KlineController();

@@ -46,7 +46,8 @@
 				klines = data.p2pdata.klines;
 				strokes = data.p2pdata.strokes;
 				lines = data.p2pdata.lines;
-				lineStrokes = data.p2pdata.lineStrokes
+				lineStrokes = data.p2pdata.lineStrokes;
+				bospList = data.p2pdata.bospList;
 				data0 = splitData(klines);
 				// 填入数据
 				myChart.setOption({
@@ -60,6 +61,9 @@
 					} ],
 					series : [ {
 						data : data0.values,
+						markPoint : {
+							data : bospList
+						}
 					}, {
 						data : calculateMA(5),
 					}, {
@@ -232,9 +236,7 @@
 				type : 'candlestick',
 				data : [],
 				markPoint : {
-					data : [ {
-						name : 'XX标点'
-					} ]
+					data : []
 				},
 				markLine : {
 					silent : true,

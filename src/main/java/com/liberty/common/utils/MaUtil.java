@@ -16,11 +16,11 @@ public class MaUtil {
 
     /**
      * 根据传入的K线数据和移动平均数周期,计算移动平均线数据
-     * @param data
+     * @param data K线集合正序排列
      * @param dayCount
      * @return
      */
-    public static List<Double> calculateMA(List<Double> data,int dayCount){
+    public static List<Double> calculateMA(List<Kline> data,int dayCount){
         List<Double> result = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             if(i<dayCount){
@@ -28,7 +28,7 @@ public class MaUtil {
             }
             double sum = 0;
             for (int j = 0; j < dayCount; j++) {
-                sum+=data.get(i-j);
+                sum+=data.get(i-j).getClose();
             }
             result.add(sum/dayCount);
         }
@@ -37,7 +37,7 @@ public class MaUtil {
 
     /**
      * 根据传入的K线数据和移动平均线周期,计算某个点的移动平均线的值
-     * @param data
+     * @param data K线集合倒叙排列
      * @param dayCount
      * @return
      */

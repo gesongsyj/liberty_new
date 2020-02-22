@@ -142,4 +142,40 @@ public abstract class BaseKline<T extends BaseKline> extends SuperModel<T> imple
 	public java.lang.Double getAoi() {
 		return getDouble("aoi");
 	}
+
+	public T setVolume(java.lang.Double volume) {
+		set("volume", volume);
+		return (T)this;
+	}
+
+	public java.lang.Double getVolume() {
+		return getDouble("volume");
+	}
+
+	public T setTurnover(java.lang.Double turnover) {
+		set("turnover", turnover);
+		return (T)this;
+	}
+
+	public java.lang.Double getTurnover() {
+		return getDouble("turnover");
+	}
+
+	public T setTurnoverRate(java.lang.Double turnoverRate) {
+		set("turnoverRate", turnoverRate);
+		return (T)this;
+	}
+
+	public java.lang.Double getTurnoverRate() {
+		return getDouble("turnoverRate");
+	}
+
+	public T setBosp(java.lang.String bosp) {
+		set("bosp", bosp);
+		return (T)this;
+	}
+
+	public java.lang.String getBosp() {
+		return getStr("bosp");
+	}
 }

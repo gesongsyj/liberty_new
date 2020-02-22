@@ -51,7 +51,7 @@ public class XlDownLoader implements DownLoader {
 	}
 
 	@Override
-	public List<Kline> downLoad(Currency currency, String type, String method, Date lastDate) {
+	public List<Kline> downLoad(Currency currency, String type, String method, Kline lastKline) {
 		Map<String, String> params = new HashMap<String, String>();
 		List<Kline> klineList = new ArrayList<Kline>();
 		String response = "";
@@ -94,10 +94,10 @@ public class XlDownLoader implements DownLoader {
 					+ "=/NewForexService.getMinKline";
 			params.put("symbol", "fx_s" + currency.getCode().toLowerCase());
 			params.put("scale", paramTypeMap.get(type));
-			if (lastDate == null) {
+			if (lastKline.getDate() == null) {
 				params.put("datalen", klineTypeNumberMap.get(type) == null ? "1000" : klineTypeNumberMap.get(type));
 			} else {
-				long between = DateUtil.getNumberBetween(DateUtil.getNextDay(now), lastDate,
+				long between = DateUtil.getNumberBetween(DateUtil.getNextDay(now), lastKline.getDate(),
 						klineTypeBetweenMap.get(type));
 				String number = String.valueOf(between);
 				params.put("datalen", number);

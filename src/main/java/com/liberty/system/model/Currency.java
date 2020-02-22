@@ -17,12 +17,11 @@ import com.liberty.system.query.StrokeQueryObject;
  */
 @SuppressWarnings("serial")
 public class Currency extends BaseCurrency<Currency> {
-	public static final String CURRENCY_TYPE_KCB = "2";
 	public static final String CURRENCY_TYPE_SH = "1";
 	public static final String CURRENCY_TYPE_SZ = "2";
 	public static final Currency dao = new Currency().dao();
 
-//	private List<Strategy> strategies;
+	//	private List<Strategy> strategies;
 //
 //	public String getStrategies() {
 //		StringBuilder sb = new StringBuilder();
@@ -76,4 +75,9 @@ public class Currency extends BaseCurrency<Currency> {
 		return list;
 	}
 
+	public List<Currency> listFollowed() {
+		String sql = getSqlFromTemplate();
+		List<Currency> list = dao.find(sql);
+		return list;
+	}
 }

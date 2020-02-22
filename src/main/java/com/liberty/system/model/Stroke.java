@@ -28,6 +28,28 @@ public class Stroke extends BaseStroke<Stroke> {
 	private List<Kline> allKlines = new ArrayList<Kline>();
 
 	/**
+	 * 判断三笔是否重叠
+	 *
+	 * @param s1
+	 * @param s2
+	 * @param s3
+	 * @return 0:重叠;1:不重叠:方向向上;2:不重叠:方向向下
+	 */
+	public int overlap(Stroke s1, Stroke s2, Stroke s3) {
+		if ("0".equals(s1.getDirection()) && "0".equals(s3.getDirection())) {
+			if (s1.getMin() > s3.getMax()) {
+				return 2;
+			}
+		}
+		if ("1".equals(s1.getDirection()) && "1".equals(s3.getDirection())) {
+			if (s1.getMax() < s3.getMin()) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	/**
 	 * 是否是缺口成笔
 	 * 
 	 * @return
@@ -106,7 +128,7 @@ public class Stroke extends BaseStroke<Stroke> {
 		return list;
 	}
 
-	public List<Stroke> getListByDate(String code, String type, Date date) {
+	public List<Stroke> listAfterByEndDate(String code, String type, Date date) {
 		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date));
 		List<Stroke> list = dao.find(sqlPara);
 		return list;
@@ -128,5 +150,17 @@ public class Stroke extends BaseStroke<Stroke> {
 	public void deleteByCurrencyId(int currencyId) {
 		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId",currencyId));
 		int update = Db.update(sqlPara);
+	}
+
+	public Stroke getLastBeforeDate(String code, String type, Date date) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date",date));
+		Stroke stroke = dao.findFirst(sqlPara);
+		return stroke;
+	}
+
+	public List<Stroke> listBeforeByEndDate(String code, String type, Date date) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date",date));
+		List<Stroke> strokes = dao.find(sqlPara);
+		return strokes;
 	}
 }

@@ -48,10 +48,36 @@ public class DateUtil {
 		return dateStr(new Date(), "yyyy-MM-dd");
 	}
 
+	public static String getDay(Date date) {
+		return dateStr(date, "yyyy-MM-dd");
+	}
+
+	public static Date date2Day(Date date) {
+		return strDate(dateStr(date, "yyyy-MM-dd"),"yyyy-MM-dd");
+	}
+
 	public static Date getNextDay(Date date) {
+		return getSomeNextDay(date,1);
+	}
+
+	public static Date getSomeNextDay(Date date,int dayCount) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
-		c.add(Calendar.DAY_OF_YEAR, 1);
+		c.add(Calendar.DAY_OF_YEAR, dayCount);
+		return c.getTime();
+	}
+
+	public static Date getNext(Date date,int timeType,int timeCount) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(timeType, timeCount);
+		return c.getTime();
+	}
+
+	public static Date getSomeDay(Date date,int offSet) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.DAY_OF_YEAR, offSet);
 		return c.getTime();
 	}
 	

@@ -15,13 +15,23 @@ import com.jfplugin.mail.MailPlugin;
 import com.liberty.common.interceptor.CoreInterceptor;
 import com.liberty.common.interceptor.ShiroInterceptor;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolPlugin;
+import com.liberty.common.utils.DateUtil;
 import com.liberty.system.model.Currency;
+import com.liberty.system.model.Kline;
+import com.liberty.system.strategy.Judger.JudgerExe;
+import com.liberty.system.strategy.agent.AgentSyn;
+import com.liberty.system.strategy.agent.StrategyAgent;
+import com.liberty.system.strategy.agent.impl.BoxBreakStrategyAgent;
+import com.liberty.system.strategy.agent.impl.CombinationStrategyAgent;
+import com.liberty.system.strategy.agent.impl.ReverseCheckStrategyAgent;
+import com.liberty.system.strategy.agent.impl.UpwardTrendStrategyAgent;
+import com.liberty.system.strategy.calibrator.Calibrator;
 import com.liberty.system.strategy.executor.Executor;
-import com.liberty.system.strategy.executor.job.Strategy3Executor;
-import com.liberty.system.strategy.executor.job.Strategy4Executor;
-import com.liberty.system.strategy.executor.job.StrategyExecutor;
+import com.liberty.system.strategy.executor.job.*;
 import net.dreamlu.event.EventPlugin;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class CoreConfig extends JFinalConfig {
@@ -133,8 +143,34 @@ public class CoreConfig extends JFinalConfig {
 //		}
 		
 		//执行策略三
-//		Executor executor = new Strategy3Executor();
-//		executor.execute(null);
+//		Executor executor1 = new Strategy3Executor();
+//		executor1.execute(null);
+//		Executor executor2 = new Strategy4Executor();
+//		executor2.execute(null);
+//		Executor executor3 = new Strategy5Executor();
+//		executor3.execute(null);
+//		Executor executor4 = new Strategy4Executor();
+//		executor4.execute(null);
+//		AgentSyn agentSyn = new UpwardTrendStrategyAgent();
+//		agentSyn.calibrate(DateUtil.strDate("2000-08-05","yyyy-MM-dd"),DateUtil.strDate("2020-02-08","yyyy-MM-dd"));
+
+//		AgentSyn agentSyn = new CombinationStrategyAgent();
+//		agentSyn.calibrate(DateUtil.strDate("2000-08-05","yyyy-MM-dd"),DateUtil.strDate("2020-02-08","yyyy-MM-dd"));
+
+//		AgentSyn agentSyn = new ReverseCheckStrategyAgent();
+//		agentSyn.calibrateCustomize(DateUtil.strDate("2020-01-07 10:00:00","yyyy-MM-dd HH:mm:ss"),DateUtil.strDate("2020-02-05 10:30:00","yyyy-MM-dd HH:mm:ss"), Calendar.MINUTE,30, Kline.KLINE_TYPE_M30K);
+
+//		AgentSyn agentSyn = new BoxBreakStrategyAgent();
+//		agentSyn.execute();
+//		agentSyn.calibrate(DateUtil.strDate("2019-12-31","yyyy-MM-dd"),DateUtil.strDate("2020-02-16","yyyy-MM-dd"));
+		//策略组合
+//		JudgerExe judgerExe = new JudgerExe();
+//		judgerExe.execute();
+		// 验证器
+//		Executor executor = new Strategy7Executor();
+//		Calibrator calibrator = new Calibrator(executor);
+//		Currency currency = Currency.dao.findByCode("002351");
+//		calibrator.calibrate(currency);
 //		executor.execute("601318");
 //		List<Currency> allCurrency = Currency.dao.listAll();
 //		for (int i = 0; i < allCurrency.size(); i++) {
