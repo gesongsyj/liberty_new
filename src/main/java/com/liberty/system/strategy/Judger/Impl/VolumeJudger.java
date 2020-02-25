@@ -1,7 +1,6 @@
 package com.liberty.system.strategy.Judger.Impl;
 
-import com.liberty.common.utils.VolumeUtil;
-import com.liberty.system.strategy.Judger.filterParam.filter.StrategyFilter;
+import com.liberty.common.utils.stock.VolumeUtil;
 import com.liberty.system.strategy.Judger.filterParam.impl.VolumeParam;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;

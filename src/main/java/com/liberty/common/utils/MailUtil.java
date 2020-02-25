@@ -10,15 +10,15 @@ import com.liberty.system.model.Strategy;
 
 public class MailUtil {
 
-	private static Map<String,Map<String,Vector<Currency>>> dateStrategyCurrencyMap = new LinkedHashMap<>();
+	private static Map<String,Map<String,Vector<Currency>>> strategyCurrencyMap = new LinkedHashMap<>();
 
 	public static synchronized void addCurrency2Buy(Date date,Strategy s,Currency currency){
-		Map<String,Vector<Currency>> strategyCurrencyMap = dateStrategyCurrencyMap.get(date.toLocaleString());
+		Map<String,Vector<Currency>> strategyCurrencyMap = MailUtil.strategyCurrencyMap.get(date.toLocaleString());
 		if(null == strategyCurrencyMap){
 			strategyCurrencyMap = new LinkedHashMap<>();
 			Vector<Currency> cs = new Vector<>();
 			strategyCurrencyMap.put(s.getDescribe(),cs);
-			dateStrategyCurrencyMap.put(date.toLocaleString(),strategyCurrencyMap);
+			MailUtil.strategyCurrencyMap.put(date.toLocaleString(),strategyCurrencyMap);
 		}else{
 			Vector<Currency> cs = strategyCurrencyMap.get(s.getDescribe());
 			if(null == cs){
@@ -35,7 +35,7 @@ public class MailUtil {
 	 * @param s
 	 */
 	public synchronized static void sendMailToBuy(Date date,Strategy s) {
-		Map<String, Vector<Currency>> strategyCurrencyMap = dateStrategyCurrencyMap.get(date.toLocaleString());
+		Map<String, Vector<Currency>> strategyCurrencyMap = MailUtil.strategyCurrencyMap.get(date.toLocaleString());
 		if(null != strategyCurrencyMap && !strategyCurrencyMap.isEmpty()){
 			Vector<Currency> cs = strategyCurrencyMap.get(s.getDescribe());
 			if(null != cs && !cs.isEmpty()){

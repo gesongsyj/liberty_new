@@ -3,7 +3,7 @@ package com.liberty.system.strategy.executor.job;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfplugin.mail.MailKit;
-import com.liberty.common.utils.MaUtil;
+import com.liberty.common.utils.stock.MaUtil;
 import com.liberty.common.utils.MailUtil;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.Currency;

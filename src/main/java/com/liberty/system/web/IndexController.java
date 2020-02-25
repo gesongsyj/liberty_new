@@ -112,7 +112,7 @@ public class IndexController extends BaseController {
 	public void test(){
 		AgentSyn agentSyn = new BoxBreakStrategyAgent();
 //		agentSyn.execute();
-		agentSyn.calibrateCustomize(DateUtil.strDate("2019-12-02","yyyy-MM-dd"),DateUtil.strDate("2020-02-16","yyyy-MM-dd"),Kline.KLINE_TYPE_K);
+		agentSyn.calibrateCustomize(DateUtil.strDate("2019-04-10","yyyy-MM-dd"),DateUtil.strDate("2019-06-01","yyyy-MM-dd"),Kline.KLINE_TYPE_K);
 
 //		AgentSyn agentSyn = new MaFittingLineStrategyAgent();
 //		agentSyn.execute();

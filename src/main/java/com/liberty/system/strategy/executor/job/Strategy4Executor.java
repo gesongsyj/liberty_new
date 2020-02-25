@@ -4,6 +4,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfplugin.mail.MailKit;
 import com.liberty.common.utils.*;
+import com.liberty.common.utils.stock.MaUtil;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;

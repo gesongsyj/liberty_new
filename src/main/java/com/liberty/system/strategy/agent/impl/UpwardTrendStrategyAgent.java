@@ -1,6 +1,6 @@
 package com.liberty.system.strategy.agent.impl;
 
-import com.liberty.common.utils.MaUtil;
+import com.liberty.common.utils.stock.MaUtil;
 import com.liberty.common.utils.MailUtil;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;

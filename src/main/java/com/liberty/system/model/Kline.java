@@ -10,7 +10,7 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.SqlPara;
-import com.liberty.common.utils.MACD;
+import com.liberty.common.utils.stock.MACD;
 import com.liberty.system.model.base.BaseKline;
 import com.liberty.system.query.KlineQueryObject;
 

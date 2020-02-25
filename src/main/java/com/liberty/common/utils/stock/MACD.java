@@ -1,9 +1,12 @@
-package com.liberty.common.utils;
+package com.liberty.common.utils.stock;
 
 import java.util.List;
 
 import com.liberty.system.model.Kline;
 
+/**
+ * MACD工具类
+ */
 public class MACD {
 	private int sp, lp, dp;
 

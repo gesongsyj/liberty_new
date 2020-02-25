@@ -1,13 +1,11 @@
 package com.liberty.system.strategy.Judger.Impl;
 
-import com.liberty.common.utils.MaUtil;
-import com.liberty.common.utils.MathUtil;
+import com.liberty.common.utils.stock.MaUtil;
+import com.liberty.common.utils.stock.MathUtil;
 import com.liberty.system.bean.common.LsmParam;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;
-import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.Judger.Judger;
-import com.liberty.system.strategy.Judger.filterParam.impl.FinanceParam;
 import com.liberty.system.strategy.Judger.filterParam.impl.MaFittingParam;
 
 import java.util.Collections;

@@ -1,8 +1,11 @@
-package com.liberty.system.test;
+package com.liberty.system.test.main;
 
 import java.util.*;
 
-public class Main {
+/**
+ * 字符串分隔
+ */
+public class Main3 {
     public static void main(String[] args){
         Scanner s = new Scanner(System.in);
         String str1 = s.nextLine();

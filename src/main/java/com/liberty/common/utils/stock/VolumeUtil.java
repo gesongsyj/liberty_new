@@ -1,4 +1,4 @@
-package com.liberty.common.utils;
+package com.liberty.common.utils.stock;
 
 import com.liberty.system.model.Kline;
 

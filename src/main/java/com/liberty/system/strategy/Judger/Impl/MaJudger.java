@@ -1,10 +1,8 @@
 package com.liberty.system.strategy.Judger.Impl;
 
-import com.liberty.common.utils.MaUtil;
+import com.liberty.common.utils.stock.MaUtil;
 import com.liberty.system.model.Line;
-import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.Judger.filterParam.impl.MaParam;
-import com.liberty.system.strategy.Judger.filterParam.filter.StrategyFilter;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;
 import com.liberty.system.strategy.Judger.Judger;

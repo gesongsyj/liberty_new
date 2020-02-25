@@ -7,6 +7,8 @@ import com.jfinal.plugin.activerecord.OrderedFieldContainerFactory;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfplugin.mail.MailPlugin;
 import com.liberty.common.jfinal._MappingKit;
+import com.liberty.common.utils.stock.MaUtil;
+import com.liberty.common.utils.stock.MathUtil;
 import com.liberty.system.bean.common.LsmParam;
 import com.liberty.system.model.Kline;
 import org.junit.Before;
