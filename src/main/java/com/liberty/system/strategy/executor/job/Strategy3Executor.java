@@ -74,6 +74,7 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
 //				}
             }
         }
+        System.out.println("满足策略的股票数:" + stayCurrency.size());
         if (stayCurrency.size() != 0) {
             MailUtil.sendMailToBuy(stayCurrency, super.getStrategy());
         }
@@ -86,42 +87,46 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        String query_metric_url_year_full_url;
-        String query_metric_url_report_full_url;
-        if(currency.getCurrencyType().equals(Currency.CURRENCY_TYPE_SH)) {
-            query_metric_url_year_full_url = MessageFormat.format(QUERY_METRIC_URL_YEAR, QUERY_METRIC_SH+currency.getCode());
-            query_metric_url_report_full_url = MessageFormat.format(QUERY_METRIC_URL_REPORT, QUERY_METRIC_SH+currency.getCode());
-        }else{//深证或科创板
-            query_metric_url_year_full_url =MessageFormat.format(QUERY_METRIC_URL_YEAR, QUERY_METRIC_SZ+currency.getCode());
-            query_metric_url_report_full_url = MessageFormat.format(QUERY_METRIC_URL_REPORT, QUERY_METRIC_SZ+currency.getCode());
-        }
-        String resp_year = HTTPUtil.http(query_metric_url_year_full_url, null, "get");
-        System.out.println(query_metric_url_year_full_url+"-->\n"+currency.getCode()+"resp_year:"+resp_year);
-        JSONArray jsonArray_year = JSON.parseArray(resp_year);
-        String resp_report = HTTPUtil.http(query_metric_url_report_full_url, null, "get");
-        JSONArray jsonArray_report = JSON.parseArray(resp_report);
-        if(jsonArray_year.size()<JUDGE_YEAR_COUNT || jsonArray_report.size()<JUDGE_YEAR_COUNT){
-            return false;
-        }
-
-        double gsjlr_val = Double.MAX_VALUE;
-        for (int i = 0; i < JUDGE_YEAR_COUNT; i++) {
-            JSONObject data_year1 = JSON.parseObject(JSON.toJSONString(jsonArray_year.get(i)));
-            double gsjlr = NumUtil.parseNumFromStr(data_year1.getString("gsjlr"));
-            if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<JZCSYL_LIMIT){
+        try{
+            String query_metric_url_year_full_url;
+            String query_metric_url_report_full_url;
+            if(currency.getCurrencyType().equals(Currency.CURRENCY_TYPE_SH)) {
+                query_metric_url_year_full_url = MessageFormat.format(QUERY_METRIC_URL_YEAR, QUERY_METRIC_SH+currency.getCode());
+                query_metric_url_report_full_url = MessageFormat.format(QUERY_METRIC_URL_REPORT, QUERY_METRIC_SH+currency.getCode());
+            }else{//深证或科创板
+                query_metric_url_year_full_url =MessageFormat.format(QUERY_METRIC_URL_YEAR, QUERY_METRIC_SZ+currency.getCode());
+                query_metric_url_report_full_url = MessageFormat.format(QUERY_METRIC_URL_REPORT, QUERY_METRIC_SZ+currency.getCode());
+            }
+            String resp_year = HTTPUtil.http(query_metric_url_year_full_url, null, "get");
+            System.out.println(query_metric_url_year_full_url+"-->\n"+currency.getCode()+"resp_year:"+resp_year);
+            JSONArray jsonArray_year = JSON.parseArray(resp_year);
+            String resp_report = HTTPUtil.http(query_metric_url_report_full_url, null, "get");
+            JSONArray jsonArray_report = JSON.parseArray(resp_report);
+            if(jsonArray_year.size()<JUDGE_YEAR_COUNT || jsonArray_report.size()<JUDGE_YEAR_COUNT){
                 return false;
             }
-            gsjlr_val =gsjlr;
-        }
-        // 比较同比增长
-        JSONObject data_report0 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(0)));
-        JSONObject data_report4 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(4)));
-        // 归属净利润和加权净资产收益率同比下降,误差5%
-        if(NumUtil.parseNumFromStr(data_report0.getString("gsjlr")) < (1-ERROR_RANGE_LIMIT)*NumUtil.parseNumFromStr(data_report4.getString("gsjlr"))|| data_report0.getDoubleValue("jqjzcsyl")<0.95*data_report4.getDoubleValue("jqjzcsyl")){
+
+            double gsjlr_val = Double.MAX_VALUE;
+            for (int i = 0; i < JUDGE_YEAR_COUNT; i++) {
+                JSONObject data_year1 = JSON.parseObject(JSON.toJSONString(jsonArray_year.get(i)));
+                double gsjlr = NumUtil.parseNumFromStr(data_year1.getString("gsjlr"));
+                if(gsjlr>gsjlr_val || data_year1.getDoubleValue("jqjzcsyl")<JZCSYL_LIMIT){
+                    return false;
+                }
+                gsjlr_val =gsjlr;
+            }
+            // 比较同比增长
+            JSONObject data_report0 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(0)));
+            JSONObject data_report4 = JSON.parseObject(JSON.toJSONString(jsonArray_report.get(4)));
+            // 归属净利润和加权净资产收益率同比下降,误差5%
+            if(NumUtil.parseNumFromStr(data_report0.getString("gsjlr")) < (1-ERROR_RANGE_LIMIT)*NumUtil.parseNumFromStr(data_report4.getString("gsjlr"))){
+                return false;
+            }
+
+            return true;
+        }catch (Exception e){
             return false;
         }
-
-        return true;
     }
 
     /**

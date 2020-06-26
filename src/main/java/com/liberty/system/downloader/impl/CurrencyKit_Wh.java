@@ -1,9 +1,6 @@
 package com.liberty.system.downloader.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -15,8 +12,8 @@ import com.liberty.system.model.Currency;
 public class CurrencyKit_Wh implements CurrencyKit{
 
 	@Override
-	public List<Currency> update() {
-		ArrayList<Currency> cs = new ArrayList<Currency>();
+	public Vector<Currency> update() {
+		Vector<Currency> cs = new Vector<Currency>();
 		String response = "";
 		String currencyUrl = "http://forex.wiapi.hexun.com/forex/sortlist";
 		Map<String, String> params = new HashMap<String, String>();

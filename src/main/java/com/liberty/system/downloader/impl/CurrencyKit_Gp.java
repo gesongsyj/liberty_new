@@ -12,8 +12,13 @@ import com.liberty.system.model.Currency;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class CurrencyKit_Gp implements CurrencyKit {
+	private static Lock lock = new ReentrantLock();
+
 	private int pagesize = 1;// 5页股票排行数据,每页20条,共100条数据
 	private final String ex_url_shanghai = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C.2&st=(ChangePercent)&sr=-1&p=1&ps=20&_=1538047395924";
 	private final String ex_url_shenzhen = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C._SZAME&st=(ChangePercent)&sr=-1&p=1&ps=20&_=1538047395924";
@@ -26,8 +31,8 @@ public class CurrencyKit_Gp implements CurrencyKit {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public List<Currency> update() {
-		ArrayList<Currency> cs = new ArrayList<Currency>();
+	public Vector<Currency> update() {
+		Vector<Currency> cs = new Vector<Currency>();
 		for (int i = 1; i <= pagesize; i++) {
 			String url_shanghai = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C.2&st=(ChangePercent)&sr=-1&p="
 					+ i + "&ps=2000&_=" + System.currentTimeMillis();
@@ -41,20 +46,21 @@ public class CurrencyKit_Gp implements CurrencyKit {
 		return cs;
 	}
 
-	private void queryCurrency(ArrayList<Currency> cs,String url){
+	private void queryCurrency(Vector<Currency> cs,String url){
 		String res = HTTPUtils.http(url, null, "get");
 		res=res.substring(res.indexOf("["), res.lastIndexOf("]")+1);
 		List<String> Strs = JSON.parseArray(res, String.class);
-		for (String string : Strs) {
-			String[] split = string.split(",");
+
+		Strs.parallelStream().forEach(e->{
+			lock.lock();
+			String[] split = e.split(",");
 			Currency c = Currency.dao.findByCode(split[1]);
 			String code = split[1];
 			double tatalStockCount = queryTotalStockCount(code);
 			if(c!=null){
-
 				// 判断名称是否有变化
 				if(c.getName().equals(split[2]) && null!=c.getTotalStockCount() && c.getTotalStockCount() == tatalStockCount){
-					continue;
+//					continue;
 				}else{
 					c.setName(split[2]);
 					c.setTotalStockCount(tatalStockCount);
@@ -73,7 +79,38 @@ public class CurrencyKit_Gp implements CurrencyKit {
 				cs.add(c);
 				c.save();
 			}
-		}
+			lock.unlock();
+		});
+
+//		for (String string : Strs) {
+//			String[] split = string.split(",");
+//			Currency c = Currency.dao.findByCode(split[1]);
+//			String code = split[1];
+//			double tatalStockCount = queryTotalStockCount(code);
+//			if(c!=null){
+//
+//				// 判断名称是否有变化
+//				if(c.getName().equals(split[2]) && null!=c.getTotalStockCount() && c.getTotalStockCount() == tatalStockCount){
+//					continue;
+//				}else{
+//					c.setName(split[2]);
+//					c.setTotalStockCount(tatalStockCount);
+//					c.update();
+//				}
+//			}else{
+//				c = new Currency();
+//				c.setCode(code);
+//				c.setName(split[2]);
+//				if(code.startsWith("6")){
+//					c.setCurrencyType(Currency.CURRENCY_TYPE_SH);
+//				}else{
+//					c.setCurrencyType(Currency.CURRENCY_TYPE_SZ);
+//				}
+//				c.setTotalStockCount(tatalStockCount);
+//				cs.add(c);
+//				c.save();
+//			}
+//		}
 	}
 
 	/**

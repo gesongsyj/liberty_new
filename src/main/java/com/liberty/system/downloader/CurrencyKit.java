@@ -1,9 +1,10 @@
 package com.liberty.system.downloader;
 
 import java.util.List;
+import java.util.Vector;
 
 import com.liberty.system.model.Currency;
 
 public interface CurrencyKit {
-	List<Currency> update();
+	Vector<Currency> update();
 }

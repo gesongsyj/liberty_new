@@ -15,9 +15,11 @@ import com.jfplugin.mail.MailPlugin;
 import com.liberty.common.interceptor.CoreInterceptor;
 import com.liberty.common.interceptor.ShiroInterceptor;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolPlugin;
+import com.liberty.common.utils.CacheUtil;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;
+import com.liberty.system.model.Strategy;
 import com.liberty.system.strategy.Judger.JudgerExe;
 import com.liberty.system.strategy.agent.AgentSyn;
 import com.liberty.system.strategy.agent.StrategyAgent;
@@ -118,6 +120,7 @@ public class CoreConfig extends JFinalConfig {
 
 	@Override
 	public void afterJFinalStart() {
+
 //		CurrencyController currencyController = new CurrencyController();
 //		currencyController.updateCurrency();
 
@@ -144,7 +147,7 @@ public class CoreConfig extends JFinalConfig {
 		
 		//执行策略三
 //		Executor executor1 = new Strategy3Executor();
-//		executor1.execute(null);
+//		executor1.execute("603288");
 //		Executor executor2 = new Strategy4Executor();
 //		executor2.execute(null);
 //		Executor executor3 = new Strategy5Executor();

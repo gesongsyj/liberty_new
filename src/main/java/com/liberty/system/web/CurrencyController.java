@@ -79,7 +79,7 @@ public class CurrencyController extends BaseController {
 	public void updateCurrency() {
 //		CurrencyKit currency=new CurrencyKit_Wh();
 		CurrencyKit currencyKit = new CurrencyKit_Gp();
-		List<Currency> cs = currencyKit.update();
+		Vector<Currency> cs = currencyKit.update();
 //		KlineController klineController = new KlineController();
 //		klineController.multiProData(cs);
 //		redirect("/currency/list");
