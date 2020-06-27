@@ -15,7 +15,7 @@ import com.liberty.system.strategy.cuttor.LossCuttor;
 public class RoutineController3 extends BaseController implements Job {
 
 	/**
-	 * 根据涨幅榜添加新的股票数据
+	 * 止损器
 	 */
 	@Override
 	public void execute(JobExecutionContext context)

@@ -4,6 +4,7 @@ package com.liberty.system.web.routine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.liberty.system.strategy.executor.job.Strategy3Executor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -25,8 +26,7 @@ public class RoutineController5 extends BaseController implements Job {
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		exes.add(new Strategy1Executor());
-		exes.add(new Strategy2Executor());
+		exes.add(new Strategy3Executor());
 		for (Executor executor : exes) {
 			executor.execute(null);
 		}
