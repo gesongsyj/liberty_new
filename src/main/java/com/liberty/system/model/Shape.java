@@ -7,6 +7,11 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class Shape extends BaseShape<Shape> {
+	// 所在K线序列的下标,构建笔的时候用
+	private int index;
+	// 分型之前是否有缺口
+	private boolean hasGap;
+
 	public static final String SHAPE_TYPE_HIGH = "0";
 	public static final String SHAPE_TYPE_LOW = "1";
 
@@ -51,4 +56,19 @@ public class Shape extends BaseShape<Shape> {
 		return false;
 	}
 
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public boolean getHasGap() {
+		return hasGap;
+	}
+
+	public void setHasGap(boolean hasGap) {
+		this.hasGap = hasGap;
+	}
 }

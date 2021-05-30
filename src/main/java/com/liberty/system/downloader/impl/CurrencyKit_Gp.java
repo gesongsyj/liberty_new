@@ -52,34 +52,40 @@ public class CurrencyKit_Gp implements CurrencyKit {
 		List<String> Strs = JSON.parseArray(res, String.class);
 
 		Strs.parallelStream().forEach(e->{
-			lock.lock();
-			String[] split = e.split(",");
-			Currency c = Currency.dao.findByCode(split[1]);
-			String code = split[1];
-			double tatalStockCount = queryTotalStockCount(code);
-			if(c!=null){
-				// 判断名称是否有变化
-				if(c.getName().equals(split[2]) && null!=c.getTotalStockCount() && c.getTotalStockCount() == tatalStockCount){
+			try{
+				lock.lock();
+				String[] split = e.split(",");
+				Currency c = Currency.dao.findByCode(split[1]);
+				String code = split[1];
+				double tatalStockCount = queryTotalStockCount(code);
+				if(c!=null){
+					// 判断名称是否有变化
+					if(c.getName().equals(split[2]) && null!=c.getTotalStockCount() && c.getTotalStockCount() == tatalStockCount){
 //					continue;
+					}else{
+						c.setName(split[2]);
+						c.setTotalStockCount(tatalStockCount);
+						c.update();
+					}
 				}else{
+					c = new Currency();
+					c.setCode(code);
 					c.setName(split[2]);
+					if(code.startsWith("6")){
+						c.setCurrencyType(Currency.CURRENCY_TYPE_SH);
+					}else{
+						c.setCurrencyType(Currency.CURRENCY_TYPE_SZ);
+					}
 					c.setTotalStockCount(tatalStockCount);
-					c.update();
+					cs.add(c);
+					c.save();
 				}
-			}else{
-				c = new Currency();
-				c.setCode(code);
-				c.setName(split[2]);
-				if(code.startsWith("6")){
-					c.setCurrencyType(Currency.CURRENCY_TYPE_SH);
-				}else{
-					c.setCurrencyType(Currency.CURRENCY_TYPE_SZ);
-				}
-				c.setTotalStockCount(tatalStockCount);
-				cs.add(c);
-				c.save();
+			}catch (Exception e1){
+				e1.printStackTrace();
+			}finally {
+				lock.unlock();
 			}
-			lock.unlock();
+
 		});
 
 //		for (String string : Strs) {

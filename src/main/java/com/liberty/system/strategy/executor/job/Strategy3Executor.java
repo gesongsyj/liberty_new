@@ -29,7 +29,7 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
     // 判断年数
     private Integer JUDGE_YEAR_COUNT = 2;
     // 净资产收益率阈值
-    private Double JZCSYL_LIMIT = 25.0;
+    private Double JZCSYL_LIMIT = 20.0;
     // 允许的误差范围
     private Double ERROR_RANGE_LIMIT = 0.05;
 

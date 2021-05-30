@@ -89,6 +89,11 @@ public abstract class BaseStroke<T extends BaseStroke> extends SuperModel<T> imp
 		return getInt("nextId");
 	}
 
+	/**
+	 * 就是方向?
+	 * @param type
+	 * @return
+	 */
 	public T setType(java.lang.String type) {
 		set("type", type);
 		return (T)this;
