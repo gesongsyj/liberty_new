@@ -3,6 +3,7 @@ package com.liberty.system.web;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfplugin.mail.MailKit;
+import com.liberty.common.constant.ConstantDefine;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.ResultMsg;
@@ -78,7 +79,7 @@ public class KlineController extends BaseController {
         KlineController klineController = new KlineController();
         klineController.downloadData(code);
         klineController.createStroke(code);
-        klineController.createLine(code);
+//        klineController.createLine(code);
         Currency currency = Currency.dao.findByCode(code);
         redirect("/kline/charts?currencyId=" + currency.getId());
     }
@@ -102,7 +103,7 @@ public class KlineController extends BaseController {
      */
     public void fetchData() {
         String code = paras.get("code");
-        String kType = paras.containsKey("kType") ? paras.get("kType") : "k";
+        String kType = paras.containsKey("kType") ? paras.get("kType") : ConstantDefine.KLINE_TYPE_K;
         if (code == null) {
             renderJson(new ResultMsg(ResultStatusCode.INVALID_INPUT));
             return;
@@ -409,7 +410,7 @@ public class KlineController extends BaseController {
                         Currency currency = cs.get(index);
                         downloadData(currency.getCode());
                         createStroke(currency.getCode());
-                        createLine(currency.getCode());
+//                        createLine(currency.getCode());
                     }
                 });
                 futureList.add(future);
@@ -447,7 +448,7 @@ public class KlineController extends BaseController {
                 public void run() {
                     Currency currency = cs.get(index);
                     createStroke(currency.getCode());
-                    createLine(currency.getCode());
+//                    createLine(currency.getCode());
                 }
             });
             futureList.add(future);

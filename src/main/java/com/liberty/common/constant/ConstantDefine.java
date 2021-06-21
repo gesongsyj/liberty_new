@@ -34,5 +34,9 @@ public class ConstantDefine {
      * 底分型
      */
     public static final String SHAPE_TYPE_bottom = "1";
+    /**
+     * K线类型:日K
+     */
+    public static final String KLINE_TYPE_K = "k";
 }
 

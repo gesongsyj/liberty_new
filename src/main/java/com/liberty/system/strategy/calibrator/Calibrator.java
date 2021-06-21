@@ -10,6 +10,7 @@ import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.executor.Executor;
 import com.liberty.system.web.KlineController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,11 +24,17 @@ public class Calibrator {
     public void calibrate() {
         List<Currency> currencyList = Currency.dao.listAll();
         for (Currency currency : currencyList) {
-            calibrate(currency);
+            calibrate(currency, null);
         }
     }
 
-    public void calibrate(Currency currency) {
+    /**
+     * 验证
+     *
+     * @param currency  currency
+     * @param startDate 开始验证的时间点,如果为空,则从头开始验证
+     */
+    public void calibrate(Currency currency, Date startDate) {
         CalibratorDownLoader calibratorDownLoader = new CalibratorDownLoader();
         DownLoader dfcfDownLoader = new DfcfDownLoader();
 
@@ -35,20 +42,45 @@ public class Calibrator {
         Stroke.dao.deleteByCurrencyId(currency.getId());
         Kline.dao.deleteByCurrencyId(currency.getId());
 
-        List<Kline> klines = dfcfDownLoader.downLoad(currency,Kline.KLINE_TYPE_K,"get",null);
+        List<Kline> klines = dfcfDownLoader.downLoad(currency, Kline.KLINE_TYPE_K, "get", null);
         KlineController klineController = new KlineController();
         klineController.setDownLoader(calibratorDownLoader);
-        for (int i = 1; i <= klines.size(); i++) {
-            List<Kline> calibrateKlines = klines.subList(i-1, i);
-            calibratorDownLoader.setResultKlines(calibrateKlines);
-            klineController.downloadData(currency.getCode());
-            klineController.createStroke(currency.getCode());
-            klineController.createLine(currency.getCode());
-            Vector<Currency> result = executor.execute(currency.getCode());
-            if (!result.isEmpty()) {
-                Kline kline = Kline.dao.getByDate(currency.getCode(),Kline.KLINE_TYPE_K, klines.get(i).getDate());
-                kline.setBosp("0");
-                kline.update();
+        if (startDate == null) {
+            for (int i = 1; i <= klines.size(); i++) {
+                List<Kline> calibrateKlines = klines.subList(i - 1, i);
+                calibratorDownLoader.setResultKlines(calibrateKlines);
+                klineController.downloadData(currency.getCode());
+                klineController.createStroke(currency.getCode());
+//                klineController.createLine(currency.getCode());
+                Vector<Currency> result = executor.execute(currency.getCode());
+                if (!result.isEmpty()) {
+                    Kline kline = Kline.dao.getByDate(currency.getCode(), Kline.KLINE_TYPE_K, klines.get(i).getDate());
+                    kline.setBosp("0");
+                    kline.update();
+                }
+            }
+        } else {
+            boolean beforeDateFlag = true;
+            for (int i = 1, j = 1; i <= klines.size(); i++) {
+                if (beforeDateFlag && klines.get(i).getDate().before(startDate)) {
+                    if (klines.get(i).getDate().before(startDate)) {
+                        continue;
+                    }
+                    // 到达预设时间点后,就不用再比较时间了
+                    beforeDateFlag = false;
+                }
+                List<Kline> calibrateKlines = klines.subList(j - 1, i);
+                calibratorDownLoader.setResultKlines(calibrateKlines);
+                klineController.downloadData(currency.getCode());
+                klineController.createStroke(currency.getCode());
+//                klineController.createLine(currency.getCode());
+                Vector<Currency> result = executor.execute(currency.getCode());
+                if (!result.isEmpty()) {
+                    Kline kline = Kline.dao.getByDate(currency.getCode(), Kline.KLINE_TYPE_K, klines.get(i).getDate());
+                    kline.setBosp("0");
+                    kline.update();
+                }
+                j++;
             }
         }
     }

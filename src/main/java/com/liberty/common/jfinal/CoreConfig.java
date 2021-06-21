@@ -170,9 +170,9 @@ public class CoreConfig extends JFinalConfig {
 //		JudgerExe judgerExe = new JudgerExe();
 //		judgerExe.execute();
 		// 验证器
-//		Executor executor = new Strategy7Executor();
+//		Executor executor = new Strategy9Executor();
 //		Calibrator calibrator = new Calibrator(executor);
-//		Currency currency = Currency.dao.findByCode("002351");
+//		Currency currency = Currency.dao.findByCode("600668");
 //		calibrator.calibrate(currency);
 //		executor.execute("601318");
 //		List<Currency> allCurrency = Currency.dao.listAll();

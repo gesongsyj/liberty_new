@@ -318,12 +318,13 @@ public class BaseController extends Controller {
                     i = i==0?i-1:i-2;
                     continue;
                 }
-                if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
-                        && klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
-                    klines.remove(i);
-                    i = i==0?i-1:i-2;
-                    continue;
-                }
+                // 后面包含前面,不处理
+//                if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
+//                        && klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
+//                    klines.remove(i);
+//                    i = i==0?i-1:i-2;
+//                    continue;
+//                }
                 if (klines.get(i).getMax() > klines.get(i + 1).getMax()
                         && klines.get(i).getMin() > klines.get(i + 1).getMin()) {
                     flag = "1";
@@ -342,13 +343,14 @@ public class BaseController extends Controller {
                     i = i==0?i-1:i-2;
                     continue;
                 }
-                if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
-                        && klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
-                    klines.get(i + 1).setMin(klines.get(i).getMin());
-                    klines.remove(i);
-                    i = i==0?i-1:i-2;
-                    continue;
-                }
+                // 后面包含前面,不处理
+//                if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
+//                        && klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
+//                    klines.get(i + 1).setMin(klines.get(i).getMin());
+//                    klines.remove(i);
+//                    i = i==0?i-1:i-2;
+//                    continue;
+//                }
                 if (klines.get(i).getMax() > klines.get(i + 1).getMax()
                         && klines.get(i).getMin() > klines.get(i + 1).getMin()) {
                     flag = "1";
@@ -362,13 +364,14 @@ public class BaseController extends Controller {
                     i = i==0?i-1:i-2;
                     continue;
                 }
-                if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
-                        && klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
-                    klines.get(i + 1).setMax(klines.get(i).getMax());
-                    klines.remove(i);
-                    i = i==0?i-1:i-2;
-                    continue;
-                }
+                // 后面包含前面,不处理
+//                if (klines.get(i).getMax() <= klines.get(i + 1).getMax()
+//                        && klines.get(i).getMin() >= klines.get(i + 1).getMin()) {
+//                    klines.get(i + 1).setMax(klines.get(i).getMax());
+//                    klines.remove(i);
+//                    i = i==0?i-1:i-2;
+//                    continue;
+//                }
                 if (klines.get(i).getMax() < klines.get(i + 1).getMax()
                         && klines.get(i).getMin() < klines.get(i + 1).getMin()) {
                     flag = "0";
