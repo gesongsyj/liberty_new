@@ -16,7 +16,7 @@ public class ThreadPoolPlugin implements IPlugin {
 	private static final int ThreadPool_coreSize = Runtime.getRuntime().availableProcessors()*4;
 	private static final int ThreadPool_maxSize = ThreadPool_coreSize*2;
 	private static final int ThreadPool_keepAliveTime = 10;
-	private static final int ThreadPool_queueSize = 1000;
+	private static final int ThreadPool_queueSize = 20000;
 
 	final static String DEFAULT = "default";
 	// 线程池名称
@@ -37,7 +37,6 @@ public class ThreadPoolPlugin implements IPlugin {
 	}
 
 	/**
-	 * @param name          线程池名称
 	 * @param coreSize      线程池默认大小
 	 * @param maxSize       最大线程数
 	 * @param queueSize     队列数

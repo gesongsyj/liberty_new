@@ -66,7 +66,7 @@ public class Calibrator {
                 beforeDateFlag = false;
             }
             List<Kline> calibrateKlines = klines.subList(startIndex, i + 1);
-            startIndex = i - 10 >= 0 ? i - 10 : 0;
+            startIndex = i - 10 >= 0 ? i - 10 : 0; // 最新的一条会被删除,所以多取几根,理论上i-1就够了
             calibratorDownLoader.setResultKlines(new ArrayList<>(calibrateKlines));
             //手动提交事务,返回true提交
             Db.tx(() -> {

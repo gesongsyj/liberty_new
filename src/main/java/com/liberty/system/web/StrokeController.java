@@ -2,6 +2,7 @@ package com.liberty.system.web;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Page;
+import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.ResultMsg;
 import com.liberty.common.utils.ResultStatusCode;
@@ -13,7 +14,11 @@ import com.liberty.system.strategy.calibrator.Calibrator;
 import com.liberty.system.strategy.executor.Executor;
 import com.liberty.system.strategy.executor.job.Strategy9Executor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StrokeController extends BaseController {
 
@@ -34,6 +39,7 @@ public class StrokeController extends BaseController {
     }
 
     /**
+     * http://localhost:8080/stroke/calibrate
      * http://localhost:8080/stroke/calibrate?code=600668
      * http://localhost:8080/stroke/calibrate?code=600668&startDate=2019-08-08
      */
@@ -42,17 +48,40 @@ public class StrokeController extends BaseController {
         Executor executor = new Strategy9Executor();
         Calibrator calibrator = new Calibrator(executor);
         String code = paras.get("code");
-        if(code==null){
-            renderText("缺少code参数");
-            return;
+        List<Currency> currencies = new ArrayList<>();
+        if (code == null) {
+            currencies = Currency.dao.listAll();
+        } else {
+            Currency currency = Currency.dao.findByCode(code);
+            currencies.add(currency);
         }
         String startDateStr = paras.get("startDate");
-        Currency currency = Currency.dao.findByCode(code);
-        if (startDateStr != null) {
-            Date startDate = DateUtil.strDate(startDateStr, "yyyy-MM-dd");
-            calibrator.calibrate(currency, startDate);
-        } else {
-            calibrator.calibrate(currency, null);
+        final List<Currency> cs = currencies;
+        ThreadPoolExecutor pool = ThreadPoolKit.getExecutor();
+        List<Future> futureList = new ArrayList<>();
+        for (int i = 0; i < cs.size(); i++) {
+            int index = i;
+            Future<?> future = pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    Currency currency = cs.get(index);
+                    if (startDateStr != null) {
+                        Date startDate = DateUtil.strDate(startDateStr, "yyyy-MM-dd");
+                        calibrator.calibrate(currency, startDate);
+                    } else {
+                        calibrator.calibrate(currency, null);
+                    }
+                }
+            });
+            futureList.add(future);
+            System.out.println("当前线程池信息: \n" + "存活线程数===" + pool.getActiveCount() + ";\n完成任务数===" + pool.getCompletedTaskCount() + ";\n总任务数===" + pool.getTaskCount());
+        }
+        for (Future future : futureList) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         renderText("ok");
     }
