@@ -34,7 +34,7 @@ public class StrokeController extends BaseController {
     }
 
     /**
-     * http://localhost:8080/stroke/calibrate
+     * http://localhost:8080/stroke/calibrate?code=600668
      * http://localhost:8080/stroke/calibrate?code=600668&startDate=2019-08-08
      */
     public void calibrate() {
@@ -42,6 +42,10 @@ public class StrokeController extends BaseController {
         Executor executor = new Strategy9Executor();
         Calibrator calibrator = new Calibrator(executor);
         String code = paras.get("code");
+        if(code==null){
+            renderText("缺少code参数");
+            return;
+        }
         String startDateStr = paras.get("startDate");
         Currency currency = Currency.dao.findByCode(code);
         if (startDateStr != null) {

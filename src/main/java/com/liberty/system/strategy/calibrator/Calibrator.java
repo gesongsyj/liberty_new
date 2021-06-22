@@ -52,61 +52,37 @@ public class Calibrator {
         List<Kline> klines = dfcfDownLoader.downLoad(currency, Kline.KLINE_TYPE_K, "get", null);
         KlineController klineController = new KlineController();
         klineController.setDownLoader(calibratorDownLoader);
+        boolean beforeDateFlag = true;
         if (startDate == null) {
-            for (int i = 0; i < klines.size(); i++) {
-                // 最新的一条会被删除,所以至少要取两条,理论上i-1就可以
-                int startIndex = i - 2 >= 0 ? i - 2 : 0;
-                List<Kline> calibrateKlines = klines.subList(startIndex, i + 1);
-                calibratorDownLoader.setResultKlines(new ArrayList<>(calibrateKlines));
-                Db.tx(() -> {
-                    klineController.downloadData(currency.getCode());
-                    return true;
-                });
-                Db.tx(() -> {
-                    klineController.createStroke(currency.getCode());
-                    return true;
-                });
-//                klineController.createLine(currency.getCode());
-                Vector<Currency> result = executor.execute(currency.getCode());
-                if (!result.isEmpty()) {
-                    Kline kline = Kline.dao.getByDate(currency.getId(), Kline.KLINE_TYPE_K, klines.get(i).getDate());
-                    Db.tx(() -> {
-                        kline.setBosp("0");
-                        kline.update();
-                        return true;
-                    });
+            beforeDateFlag = false;
+        }
+        int startIndex = 0;
+        for (int i = 0; i < klines.size(); i++) {
+            if (beforeDateFlag && klines.get(i).getDate().before(startDate)) {
+                if (klines.get(i).getDate().before(startDate)) {
+                    continue;
                 }
-                System.out.println("验证进度============:" + i + "/" + (klines.size() - 1));
+                // 到达预设时间点后,就不用再比较时间了
+                beforeDateFlag = false;
             }
-        } else {
-            boolean beforeDateFlag = true;
-            for (int i = 0, j = 0; i < klines.size(); i++) {
-                if (beforeDateFlag && klines.get(i).getDate().before(startDate)) {
-                    if (klines.get(i).getDate().before(startDate)) {
-                        continue;
-                    }
-                    // 到达预设时间点后,就不用再比较时间了
-                    beforeDateFlag = false;
-                }
-                List<Kline> calibrateKlines = klines.subList(j, i + 1);
-                j = i - 2;
-                calibratorDownLoader.setResultKlines(new ArrayList<>(calibrateKlines));
-                //手动提交事务,返回true提交
-                Db.tx(() -> {
-                    klineController.downloadData(currency.getCode());
-                    return true;
-                });
-                Db.tx(() -> {
-                    klineController.createStroke(currency.getCode());
-                    return true;
-                });
+            List<Kline> calibrateKlines = klines.subList(startIndex, i + 1);
+            startIndex = i - 10 >= 0 ? i - 10 : 0;
+            calibratorDownLoader.setResultKlines(new ArrayList<>(calibrateKlines));
+            //手动提交事务,返回true提交
+            Db.tx(() -> {
+                klineController.downloadData(currency.getCode());
+                return true;
+            });
+            Db.tx(() -> {
+                klineController.createStroke(currency.getCode());
+                return true;
+            });
 //              klineController.createLine(currency.getCode());
-                Vector<Currency> result = executor.execute(currency.getCode());
-                if (!result.isEmpty()) {
-                    retDate.add(klines.get(i).getDate());
-                }
-                System.out.println("验证进度============:" + i + "/" + (klines.size() - 1));
+            Vector<Currency> result = executor.execute(currency.getCode());
+            if (!result.isEmpty()) {
+                retDate.add(klines.get(i).getDate());
             }
+            System.out.println("验证进度============:" + i + "/" + (klines.size() - 1));
         }
         System.out.println("结果数量:" + retDate.size());
         for (Date date : retDate) {
