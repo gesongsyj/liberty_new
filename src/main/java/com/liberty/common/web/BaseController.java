@@ -83,9 +83,9 @@ public class BaseController extends Controller {
                 if (getParaValues(paraName).length > 1) {
                     map.put(paraName, getParaValues(paraName));
                 } else {
-                    if (!"".equals(getPara(paraName))){
-						map.put(paraName, getPara(paraName));
-					}
+                    if (!"".equals(getPara(paraName))) {
+                        map.put(paraName, getPara(paraName));
+                    }
                 }
             }
         } else {
@@ -315,7 +315,7 @@ public class BaseController extends Controller {
                 if (klines.get(i).getMax() >= klines.get(i + 1).getMax()
                         && klines.get(i).getMin() <= klines.get(i + 1).getMin()) {
                     klines.remove(i + 1);
-                    i = i==0?i-1:i-2;
+                    i = i == 0 ? i - 1 : i - 2;
                     continue;
                 }
                 // 后面包含前面,不处理
@@ -340,7 +340,7 @@ public class BaseController extends Controller {
                         && klines.get(i).getMin() <= klines.get(i + 1).getMin()) {
                     klines.get(i).setMin(klines.get(i + 1).getMin());
                     klines.remove(i + 1);
-                    i = i==0?i-1:i-2;
+                    i = i == 0 ? i - 1 : i - 2;
                     continue;
                 }
                 // 后面包含前面,不处理
@@ -361,7 +361,7 @@ public class BaseController extends Controller {
                         && klines.get(i).getMin() <= klines.get(i + 1).getMin()) {
                     klines.get(i).setMax(klines.get(i + 1).getMax());
                     klines.remove(i + 1);
-                    i = i==0?i-1:i-2;
+                    i = i == 0 ? i - 1 : i - 2;
                     continue;
                 }
                 // 后面包含前面,不处理
@@ -982,7 +982,7 @@ public class BaseController extends Controller {
      * @return
      */
     public List<Shape> handleShapes(List<Kline> klines, Stroke inStroke) {
-        return handleShapes(klines,inStroke,true);
+        return handleShapes(klines, inStroke, true);
     }
 
     /**
@@ -992,7 +992,7 @@ public class BaseController extends Controller {
      * @param inStroke
      * @return
      */
-    public List<Shape> handleShapes(List<Kline> klines, Stroke inStroke,boolean deleteLastStroke) {
+    public List<Shape> handleShapes(List<Kline> klines, Stroke inStroke, boolean deleteLastStroke) {
         List<Shape> shapes = new ArrayList<Shape>();
         // 前一个确定的shape的下标
         int shapeIndex = -1;
@@ -1000,7 +1000,7 @@ public class BaseController extends Controller {
         int endIndex = 0;
         if (inStroke != null) {
             // 最后一笔可能变动,直接删除
-            if(deleteLastStroke){
+            if (deleteLastStroke) {
                 Stroke.dao.deleteById(inStroke.getId());
             }
             Shape ppreShape = new Shape().setDate(inStroke.getStartDate());
@@ -1046,7 +1046,7 @@ public class BaseController extends Controller {
                         if (shapes.size() < 2) {
                             continue;
                         }
-                        List<Kline> klinesSub = klines.subList(shapeIndex<0?0:shapeIndex, i + 3);
+                        List<Kline> klinesSub = klines.subList(shapeIndex < 0 ? 0 : shapeIndex, i + 3);
                         if (Shape.dao.gapToStroke(ppreShape, klinesSub)) {
                             if (!innerExtremeCheck(startIndex, endIndex, klines, preShape, shape)) {
                                 continue;
@@ -1058,6 +1058,34 @@ public class BaseController extends Controller {
                         if (!innerExtremeCheck(startIndex, endIndex, klines, preShape, shape)) {
                             continue;
                         }
+                    }
+                } else {
+                    if ("0".equals(shape.getType())) {
+                        // 顶分
+                        if (shape.getMax() > preShape.getMax()) {
+                            preShape.setDate(shape.getDate());
+                            preShape.setMax(shape.getMax());
+                            startIndex = i + 1;
+                            shapeIndex = i;
+                        }
+                    } else {
+                        // 底分
+                        if (shape.getMin() < preShape.getMin()) {
+                            preShape.setDate(shape.getDate());
+                            preShape.setMin(shape.getMin());
+                            startIndex = i + 1;
+                            shapeIndex = i;
+                        }
+                    }
+                    continue;
+                }
+            } else if (shapes.size() == 1) {
+                // 前分型
+                Shape preShape = shapes.get(shapes.size() - 1);
+                if (!sameTypeShapeCheck(preShape, shape)) {
+                    // 与前一个分型类型不同
+                    if (!innerExtremeCheck(startIndex, endIndex, klines, preShape, shape)) {
+                        continue;
                     }
                 } else {
                     if ("0".equals(shape.getType())) {
@@ -1135,7 +1163,7 @@ public class BaseController extends Controller {
         if ("0".equals(shape.getType())) {
             // 向上笔
             for (int j = startIndex; j < endIndex; j++) {
-                if (klines.get(j).getMin() < preShape.getMin() || klines.get(j).getMax()>shape.getMax()) {
+                if (klines.get(j).getMin() < preShape.getMin() || klines.get(j).getMax() > shape.getMax()) {
 //                    preShape.setDate(klines.get(j).getDate());
 //                    preShape.setMin(klines.get(j).getMin());
                     return false;
@@ -1144,7 +1172,7 @@ public class BaseController extends Controller {
         } else {
             // 向下笔
             for (int j = startIndex; j < endIndex; j++) {
-                if (klines.get(j).getMax() > preShape.getMax() || klines.get(j).getMin()<shape.getMin()) {
+                if (klines.get(j).getMax() > preShape.getMax() || klines.get(j).getMin() < shape.getMin()) {
 //                    preShape.setDate(klines.get(j).getDate());
 //                    preShape.setMax(klines.get(j).getMax());
                     return false;

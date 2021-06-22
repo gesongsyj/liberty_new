@@ -54,10 +54,18 @@ public class Calibrator {
         klineController.setDownLoader(calibratorDownLoader);
         if (startDate == null) {
             for (int i = 0; i < klines.size(); i++) {
-                List<Kline> calibrateKlines = klines.subList(i, i + 1);
-                calibratorDownLoader.setResultKlines(calibrateKlines);
-                klineController.downloadData(currency.getCode());
-                klineController.createStroke(currency.getCode());
+                // 最新的一条会被删除,所以至少要取两条,理论上i-1就可以
+                int startIndex = i - 2 >= 0 ? i - 2 : 0;
+                List<Kline> calibrateKlines = klines.subList(startIndex, i + 1);
+                calibratorDownLoader.setResultKlines(new ArrayList<>(calibrateKlines));
+                Db.tx(() -> {
+                    klineController.downloadData(currency.getCode());
+                    return true;
+                });
+                Db.tx(() -> {
+                    klineController.createStroke(currency.getCode());
+                    return true;
+                });
 //                klineController.createLine(currency.getCode());
                 Vector<Currency> result = executor.execute(currency.getCode());
                 if (!result.isEmpty()) {
@@ -68,6 +76,7 @@ public class Calibrator {
                         return true;
                     });
                 }
+                System.out.println("验证进度============:" + i + "/" + (klines.size() - 1));
             }
         } else {
             boolean beforeDateFlag = true;
@@ -80,7 +89,8 @@ public class Calibrator {
                     beforeDateFlag = false;
                 }
                 List<Kline> calibrateKlines = klines.subList(j, i + 1);
-                calibratorDownLoader.setResultKlines(calibrateKlines);
+                j = i - 2;
+                calibratorDownLoader.setResultKlines(new ArrayList<>(calibrateKlines));
                 //手动提交事务,返回true提交
                 Db.tx(() -> {
                     klineController.downloadData(currency.getCode());
@@ -95,12 +105,14 @@ public class Calibrator {
                 if (!result.isEmpty()) {
                     retDate.add(klines.get(i).getDate());
                 }
-                j++;
+                System.out.println("验证进度============:" + i + "/" + (klines.size() - 1));
             }
         }
+        System.out.println("结果数量:" + retDate.size());
         for (Date date : retDate) {
+            System.out.println("===>" + date.toLocaleString());
             Kline kline = Kline.dao.getByDate(currency.getId(), Kline.KLINE_TYPE_K, date);
-            if(kline!=null){
+            if (kline != null) {
                 Db.tx(() -> {
                     kline.setBosp("0");
                     kline.update();

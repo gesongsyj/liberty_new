@@ -33,14 +33,23 @@ public class StrokeController extends BaseController {
         renderText("查询");
     }
 
+    /**
+     * http://localhost:8080/stroke/calibrate
+     * http://localhost:8080/stroke/calibrate?code=600668&startDate=2019-08-08
+     */
     public void calibrate() {
         // 验证器
         Executor executor = new Strategy9Executor();
         Calibrator calibrator = new Calibrator(executor);
-        Currency currency = Currency.dao.findByCode("600668");
-        Date startDate = DateUtil.strDate("2019-08-05", "yyyy-MM-dd");
-        calibrator.calibrate(currency,startDate);
-//        calibrator.calibrate(currency,null);
+        String code = paras.get("code");
+        String startDateStr = paras.get("startDate");
+        Currency currency = Currency.dao.findByCode(code);
+        if (startDateStr != null) {
+            Date startDate = DateUtil.strDate(startDateStr, "yyyy-MM-dd");
+            calibrator.calibrate(currency, startDate);
+        } else {
+            calibrator.calibrate(currency, null);
+        }
         renderText("ok");
     }
 }
