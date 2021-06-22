@@ -48,7 +48,7 @@ public class MathUtilTest {
 
     @Test
     public void test01(){
-        List<Kline> byDateRange = Kline.dao.listAllByCode("000977", Kline.KLINE_TYPE_K);
+        List<Kline> byDateRange = Kline.dao.listAllByCurrencyId(977, Kline.KLINE_TYPE_K);
 
 //        List<Kline> byDateRange = Kline.dao.getByDateRange("002547",Kline.KLINE_TYPE_K,DateUtil.strDate("2016-11-11 00:00:00","yyyy-MM-dd HH:mm:ss"),DateUtil.strDate("2019-11-11 00:00:00","yyyy-MM-dd HH:mm:ss"));
         List<Double> data = MaUtil.calculateMA(byDateRange, 250);

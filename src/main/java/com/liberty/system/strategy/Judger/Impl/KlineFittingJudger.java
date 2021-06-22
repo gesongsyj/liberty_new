@@ -22,7 +22,7 @@ public class KlineFittingJudger implements Judger {
 
     @Override
     public boolean judgeItem(Currency currency, Date date) {
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, date, klineFittingParam.getKlineCount());
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, date, klineFittingParam.getKlineCount());
         if(klines.size()<klineFittingParam.getKlineCount()){
             return false;
         }

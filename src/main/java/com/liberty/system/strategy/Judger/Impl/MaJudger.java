@@ -28,8 +28,8 @@ public class MaJudger implements Judger {
      */
     private boolean checkUnderMa(Currency currency,Date date){
         Line lastLine = Line.dao.getLastBeforeDate(currency.getCode(),Kline.KLINE_TYPE_K,date);
-        List<Kline> klinesByDateRange = Kline.dao.getByDateRange(currency.getCode(), Kline.KLINE_TYPE_K, lastLine.getEndDate(), date);
-        List<Kline> klinesForCalMa = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, date, maParam.getMaCount() + klinesByDateRange.size());
+        List<Kline> klinesByDateRange = Kline.dao.getByDateRange(currency.getId(), Kline.KLINE_TYPE_K, lastLine.getEndDate(), date);
+        List<Kline> klinesForCalMa = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, date, maParam.getMaCount() + klinesByDateRange.size());
         Collections.reverse(klinesForCalMa);
         List<Double> maPoints = MaUtil.calculateMA(klinesForCalMa, maParam.getMaCount());
         for (int i = 0; i < klinesByDateRange.size(); i++) {
@@ -47,7 +47,7 @@ public class MaJudger implements Judger {
         }
 
         // 查询指定时间之前的K线
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, date, maParam.getMaCount());
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, date, maParam.getMaCount());
         if (klines.size() < maParam.getMaCount()) {
             return false;
         }

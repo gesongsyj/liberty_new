@@ -30,7 +30,7 @@ public class CombinationStrategyAgent extends StrategyAgent {
         boolean judge = strategyFilter.judge(currency,getExeDate());
 
         if(judge){
-            Kline kline = Kline.dao.getByDate(currency.getCode(),Kline.KLINE_TYPE_K, getExeDate());
+            Kline kline = Kline.dao.getByDate(currency.getId(),Kline.KLINE_TYPE_K, getExeDate());
             kline.setBosp("0");
             kline.update();
             MailUtil.addCurrency2Buy(getExeDate(),strategy,currency);

@@ -78,7 +78,8 @@ public class Stroke extends BaseStroke<Stroke> {
 	public boolean update(String code, String type) {
 		try {
 			super.update();
-			List<Kline> klines = Kline.dao.getByDateRange(code, type, this.getStartDate(), this.getEndDate());
+			Currency currency = Currency.dao.findByCode(code);
+			List<Kline> klines = Kline.dao.getByDateRange(currency.getId(), type, this.getStartDate(), this.getEndDate());
 			for (Kline kline : klines) {
 				kline.setStrokeId(this.getId());
 				allKlines.add(kline);
@@ -93,7 +94,8 @@ public class Stroke extends BaseStroke<Stroke> {
 	public boolean save(String code, String type) {
 		try {
 			super.save();
-			List<Kline> klines = Kline.dao.getByDateRange(code, type, this.getStartDate(), this.getEndDate());
+			Currency currency = Currency.dao.findByCode(code);
+			List<Kline> klines = Kline.dao.getByDateRange(currency.getId(), type, this.getStartDate(), this.getEndDate());
 			for (Kline kline : klines) {
 				kline.setStrokeId(this.getId());
 				allKlines.add(kline);
@@ -110,26 +112,26 @@ public class Stroke extends BaseStroke<Stroke> {
 		return dao.paginate(qo.getCurrentPage(), qo.getPageSize(), sqlPara);
 	}
 
-	public Stroke getLastByCode(String code, String type) {
-		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
+	public Stroke getLastByCurrencyId(int currencyId, String type) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type));
 		Stroke stroke = dao.findFirst(sqlPara);
 		return stroke;
 	}
 
-	public List<Stroke> getLastSomeByCode(String code, String type,int limit) {
-		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("limit",limit));
+	public List<Stroke> getLastSomeByCurrencyId(int currencyId, String type, int limit) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("limit",limit));
 		List<Stroke> strokes = dao.find(sqlPara);
 		return strokes;
 	}
 
-	public List<Stroke> listAllByCode(String code, String type) {
-		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
+	public List<Stroke> listAllByCurrencyId(int currencyId, String type) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type));
 		List<Stroke> list = dao.find(sqlPara);
 		return list;
 	}
 
-	public List<Stroke> listAfterByEndDate(String code, String type, Date date) {
-		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date));
+	public List<Stroke> listAfterByEndDate(int currencyId, String type, Date date) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date));
 		List<Stroke> list = dao.find(sqlPara);
 		return list;
 	}
@@ -152,14 +154,14 @@ public class Stroke extends BaseStroke<Stroke> {
 		int update = Db.update(sqlPara);
 	}
 
-	public Stroke getLastBeforeDate(String code, String type, Date date) {
-		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date",date));
+	public Stroke getLastBeforeDate(int currencyId, String type, Date date) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date",date));
 		Stroke stroke = dao.findFirst(sqlPara);
 		return stroke;
 	}
 
-	public List<Stroke> listBeforeByEndDate(String code, String type, Date date) {
-		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date",date));
+	public List<Stroke> listBeforeByEndDate(int currencyId, String type, Date date) {
+		SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date",date));
 		List<Stroke> strokes = dao.find(sqlPara);
 		return strokes;
 	}

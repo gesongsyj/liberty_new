@@ -1,9 +1,7 @@
 package com.liberty.system.web;
 
-import com.jfinal.aop.Before;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfplugin.mail.MailKit;
 import com.liberty.common.constant.ConstantDefine;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
@@ -111,8 +109,8 @@ public class KlineController extends BaseController {
             return;
         }
         Currency currency = Currency.dao.findByCode(code);
-        List<Kline> allKlines = Kline.dao.listAllByCode(code, kType);
-        List<Stroke> allStrokes = Stroke.dao.listAllByCode(code, kType);
+        List<Kline> allKlines = Kline.dao.listAllByCurrencyId(currency.getId(), kType);
+        List<Stroke> allStrokes = Stroke.dao.listAllByCurrencyId(currency.getId(), kType);
         List<Line> allLines = Line.dao.listAllByCode(code, kType);
 
         List<Map<String, Object>> bospList = new ArrayList<>();
@@ -283,19 +281,20 @@ public class KlineController extends BaseController {
      */
 //	@Before(Tx.class)
     public void createStroke(String includeCurrencyCode) {
+        Currency currency = Currency.dao.findByCode(includeCurrencyCode);
         String sql = "select * from dictionary where type='klineType_gp'";
         List<Record> klineType = Db.find(sql);
         for (Record record : klineType) {
             System.out.println(record);
             List<Kline> klines;
             // 查询最后一笔
-            Stroke lastStroke = Stroke.dao.getLastByCode(includeCurrencyCode, record.getStr("key"));
+            Stroke lastStroke = Stroke.dao.getLastByCurrencyId(currency.getId(), record.getStr("key"));
             if (lastStroke == null) {
-                klines = Kline.dao.listAllByCode(includeCurrencyCode, record.getStr("key"));
+                klines = Kline.dao.listAllByCurrencyId(currency.getId(), record.getStr("key"));
             } else {
                 // 查询最后一笔之后的K线
                 Date date = lastStroke.getEndDate();
-                klines = Kline.dao.getListAfterDate(includeCurrencyCode, record.getStr("key"), date);
+                klines = Kline.dao.getListAfterDate(currency.getId(), record.getStr("key"), date);
             }
             if (klines.isEmpty()) {
                 continue;
@@ -312,19 +311,20 @@ public class KlineController extends BaseController {
 
 //    @Before(Tx.class)
     public void createStroke_bak(String includeCurrencyCode) {
+        Currency currency = Currency.dao.findByCode(includeCurrencyCode);
         String sql = "select * from dictionary where type='klineType_gp'";
         List<Record> klineType = Db.find(sql);
         for (Record record : klineType) {
             System.out.println(record);
             List<Kline> klines;
             // 查询最后一笔
-            Stroke lastStroke = Stroke.dao.getLastByCode(includeCurrencyCode, record.getStr("key"));
+            Stroke lastStroke = Stroke.dao.getLastByCurrencyId(currency.getId(), record.getStr("key"));
             if (lastStroke == null) {
-                klines = Kline.dao.listAllByCode(includeCurrencyCode, record.getStr("key"));
+                klines = Kline.dao.listAllByCurrencyId(currency.getId(), record.getStr("key"));
             } else {
                 // 查询最后一笔之后的K线
                 Date date = lastStroke.getEndDate();
-                klines = Kline.dao.getListAfterDate(includeCurrencyCode, record.getStr("key"), date);
+                klines = Kline.dao.getListAfterDate(currency.getId(), record.getStr("key"), date);
             }
             if (klines.isEmpty()) {
                 continue;
@@ -356,7 +356,7 @@ public class KlineController extends BaseController {
             List<Line> storeLines = new ArrayList<>();
             Line lastLine = Line.dao.getLastByCode(includeCurrencyCode, record.getStr("key"));
             if (lastLine == null) {
-                strokes = Stroke.dao.listAllByCode(includeCurrencyCode, record.getStr("key"));
+                strokes = Stroke.dao.listAllByCurrencyId(currency.getId(), record.getStr("key"));
                 if (strokes == null || strokes.size() == 0) {
                     continue;
                 }
@@ -365,7 +365,7 @@ public class KlineController extends BaseController {
                 // 查询最后一条线段后的笔
                 Date date = lastLine.getEndDate();
                 // 用多线程机制
-                strokes = Stroke.dao.listAfterByEndDate(includeCurrencyCode, record.getStr("key"), date);
+                strokes = Stroke.dao.listAfterByEndDate(currency.getId(), record.getStr("key"), date);
                 if (strokes == null || strokes.size() == 0) {
                     continue;
                 }
@@ -484,7 +484,7 @@ public class KlineController extends BaseController {
         List<Currency> cs = Currency.dao.listAll();
         if(null != cs){
             for (Currency c : cs) {
-                Kline last1 = Kline.dao.getLastOneByCode(c.getCode(), Kline.KLINE_TYPE_K);
+                Kline last1 = Kline.dao.getLastOneByCurrencyId(c.getId(), Kline.KLINE_TYPE_K);
                 if(null != last1 && null != last1.getAoi()){
                     if(last1.getAoi()>LIMIT_UP){
                         c.setFollowed(true);
@@ -503,9 +503,9 @@ public class KlineController extends BaseController {
         List<Currency> cs = Currency.dao.listFollowed();
         if(null != cs){
             for (Currency c : cs) {
-                Kline last1 = Kline.dao.getLastOneByCode(c.getCode(), Kline.KLINE_TYPE_K);
+                Kline last1 = Kline.dao.getLastOneByCurrencyId(c.getId(), Kline.KLINE_TYPE_K);
                 if(null != last1){
-                    List<Kline> byDateRange = Kline.dao.getByDateRange(c.getCode(), Kline.KLINE_TYPE_K, c.getFollowedDate(), last1.getDate());
+                    List<Kline> byDateRange = Kline.dao.getByDateRange(c.getId(), Kline.KLINE_TYPE_K, c.getFollowedDate(), last1.getDate());
                     if(byDateRange.size()>=STOP_FOLLOW_LIMIT){
                         c.setFollowed(false);
                         c.setFollowedDate(null);

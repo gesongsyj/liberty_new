@@ -71,7 +71,7 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
     @Override
     public boolean executeSingle(Currency currency) {
         // 获取最后一笔
-        Stroke last1ByCode = Stroke.dao.getLastByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        Stroke last1ByCode = Stroke.dao.getLastByCurrencyId(currency.getId(), Kline.KLINE_TYPE_K);
         if(null == last1ByCode){
             return false;
         }
@@ -82,7 +82,7 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
 
         // 计算移动平均值
         int dayCount = 250;
-        List<Kline> klinesOfLast1Stroke = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last1ByCode.getEndDate(), dayCount);
+        List<Kline> klinesOfLast1Stroke = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, last1ByCode.getEndDate(), dayCount);
         if (klinesOfLast1Stroke.size() < 250) {
             return false;
         }
@@ -94,11 +94,11 @@ public class Strategy4Executor extends StrategyExecutor implements Executor {
         }
 
         // 当前K线
-        Kline last1 = Kline.dao.getLastOneByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        Kline last1 = Kline.dao.getLastOneByCurrencyId(currency.getId(), Kline.KLINE_TYPE_K);
         if(last1.getDiff()<0 || last1.getDea()<0){
             return false;
         }
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last1.getDate(), dayCount);
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, last1.getDate(), dayCount);
         // 得到计算的移动平均线的值
         Double maPointOfKlines = MaUtil.calculateMAPoint(klines, dayCount);
         // 当前K线的最高点必须在移动平均值之上

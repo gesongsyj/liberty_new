@@ -26,7 +26,7 @@ public class MaFittingJudger implements Judger {
     public boolean judgeItem(Currency currency, Date date) {
         // 判断的样本值
         int count = maFittingParam.getMaCount();
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K,date,maFittingParam.getMaCount()+maFittingParam.getMaCycleCount());
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K,date,maFittingParam.getMaCount()+maFittingParam.getMaCycleCount());
         Collections.reverse(klines);
         List<Double> mas = MaUtil.calculateMA(klines, maFittingParam.getMaCycleCount());
         if(mas.size()<count){

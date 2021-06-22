@@ -81,13 +81,13 @@ public class Strategy8Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        Stroke lastStroke = Stroke.dao.getLastByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        Stroke lastStroke = Stroke.dao.getLastByCurrencyId(currency.getId(), Kline.KLINE_TYPE_K);
         if(!Stroke.STROKE_TYPE_DOWN.equals(lastStroke.getDirection())){
             return false;
         }
         // 判断的样本值
         int count = 50;
-        List<Kline> klines = Kline.dao.listAllByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        List<Kline> klines = Kline.dao.listAllByCurrencyId(currency.getId(), Kline.KLINE_TYPE_K);
         List<Double> mas = MaUtil.calculateMA(klines, 250);
         if(mas.size()<count){
             return false;

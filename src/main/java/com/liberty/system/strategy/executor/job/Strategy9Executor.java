@@ -1,14 +1,11 @@
 package com.liberty.system.strategy.executor.job;
 
-import com.jfplugin.mail.MailKit;
 import com.liberty.common.constant.ConstantDefine;
 import com.liberty.common.utils.MailUtil;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.*;
 import com.liberty.system.strategy.executor.Executor;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -54,7 +51,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        List<Stroke> strokes = Stroke.dao.listAllByCode(currency.getCode(), ConstantDefine.KLINE_TYPE_K);
+        List<Stroke> strokes = Stroke.dao.listAllByCurrencyId(currency.getId(), ConstantDefine.KLINE_TYPE_K);
         if (strokes.size() < 5) {
             return false;
         }

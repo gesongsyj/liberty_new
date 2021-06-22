@@ -71,7 +71,7 @@ public class Strategy6Executor extends StrategyExecutor implements Executor {
     @Override
     public boolean executeSingle(Currency currency) {
         // 获取最近的三笔(下上下),倒序
-        List<Stroke> last3strokes = Stroke.dao.getLastSomeByCode(currency.getCode(), Kline.KLINE_TYPE_K, 3);
+        List<Stroke> last3strokes = Stroke.dao.getLastSomeByCurrencyId(currency.getId(), Kline.KLINE_TYPE_K, 3);
         if (last3strokes.size() < 3) {
             return false;
         }
@@ -82,14 +82,14 @@ public class Strategy6Executor extends StrategyExecutor implements Executor {
 
         // 计算向上笔起始处的移动平均值
         int dayCount = 250;
-        List<Kline> klinesOfLast2thStrokeStart = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(1).getStartDate(), dayCount);
+        List<Kline> klinesOfLast2thStrokeStart = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, last3strokes.get(1).getStartDate(), dayCount);
         if (klinesOfLast2thStrokeStart.size() < 250) {
             return false;
         }
         // 得到计算的移动平均线的值
         Double maPointOfLast2thStrokeStart = MaUtil.calculateMAPoint(klinesOfLast2thStrokeStart, dayCount);
         // 计算向上笔结束处的移动平均值
-        List<Kline> klinesOfLast2thStrokeEnd = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(1).getEndDate(), dayCount);
+        List<Kline> klinesOfLast2thStrokeEnd = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, last3strokes.get(1).getEndDate(), dayCount);
         // 得到计算的移动平均线的值
         Double maPointOfLast2thStrokeEnd = MaUtil.calculateMAPoint(klinesOfLast2thStrokeEnd, dayCount);
 
@@ -104,7 +104,7 @@ public class Strategy6Executor extends StrategyExecutor implements Executor {
 
         // 第一笔下的最高点需在250日均线下
         // 计算向上笔起始处的移动平均值
-        List<Kline> klinesOfLast3thStrokeStart = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, last3strokes.get(2).getStartDate(), dayCount);
+        List<Kline> klinesOfLast3thStrokeStart = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, last3strokes.get(2).getStartDate(), dayCount);
         if (klinesOfLast3thStrokeStart.size() < 250) {
             return false;
         }

@@ -23,7 +23,7 @@ public class MacdFittingJudger implements Judger {
 
     @Override
     public boolean judgeItem(Currency currency, Date date) {
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, date, macdFittingParam.getMacdCount());
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, date, macdFittingParam.getMacdCount());
         // 当前不能是绿柱子
         if(klines.get(0).getBar()<0){
             return false;

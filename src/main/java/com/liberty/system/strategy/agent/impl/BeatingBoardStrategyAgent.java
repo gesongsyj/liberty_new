@@ -35,7 +35,7 @@ public class BeatingBoardStrategyAgent extends StrategyAgent {
         Iterator<Currency> iterator = currencies.iterator();
         while (iterator.hasNext()){
             Currency next = iterator.next();
-            Kline lastOne = Kline.dao.getLastOneByCodeAndDate(next.getCode(), Kline.KLINE_TYPE_K, yesterday);
+            Kline lastOne = Kline.dao.getLastOneByCurrencyIdAndDate(next.getId(), Kline.KLINE_TYPE_K, yesterday);
             if(null != lastOne.getAoi() && lastOne.getAoi()<0.099){
                 iterator.remove();
             }

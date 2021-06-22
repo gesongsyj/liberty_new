@@ -31,7 +31,7 @@ public class BoxBreakStrategyAgent extends StrategyAgent {
     @Override
     public void executeSingle(Currency currency) {
         String exeDate = getExeDate().toString();
-        List<Stroke> strokes = Stroke.dao.listBeforeByEndDate(currency.getCode(), Kline.KLINE_TYPE_K, getExeDate());
+        List<Stroke> strokes = Stroke.dao.listBeforeByEndDate(currency.getId(), Kline.KLINE_TYPE_K, getExeDate());
         // 寻找分界点:三笔不重合
         Date dateLimit = DateUtil.getNext(getExeDate(), Calendar.YEAR, -3);
         List<Stroke> dividedStrokes = divideStroke(strokes, dateLimit);
@@ -51,7 +51,7 @@ public class BoxBreakStrategyAgent extends StrategyAgent {
         if(dividedStrokes.size()<6){
             return false;
         }
-        List<Kline> klines = Kline.dao.getByDateRange(currency.getCode(), Kline.KLINE_TYPE_K, dividedStrokes.get(0).getStartDate(), getExeDate());
+        List<Kline> klines = Kline.dao.getByDateRange(currency.getId(), Kline.KLINE_TYPE_K, dividedStrokes.get(0).getStartDate(), getExeDate());
         // 笔的极值拟合直线判断----start
         List<Double> maxList = new ArrayList<>();
         List<Double> minList = new ArrayList<>();
@@ -104,7 +104,7 @@ public class BoxBreakStrategyAgent extends StrategyAgent {
         if(klines.get(klines.size()-1).getMax()>=BOX_UP_LIMIT*(lsmParam1.getBeta()*klines.size()+lsmParam1.getAlpha())){
             String uniqueFlag = dividedStrokes.get(0).getStartDate()+"->"+dividedStrokes.get(dividedStrokes.size()-1).getEndDate();
             if(successStrategy(currency,uniqueFlag)){
-                Kline kline = Kline.dao.getByDate(currency.getCode(),Kline.KLINE_TYPE_K, getExeDate());
+                Kline kline = Kline.dao.getByDate(currency.getId(),Kline.KLINE_TYPE_K, getExeDate());
                 kline.setBosp("0");
                 kline.update();
                 MailUtil.addCurrency2Buy(getExeDate(),strategy,currency);

@@ -39,7 +39,7 @@ public class MaFittingLineStrategyAgent extends StrategyAgent {
             Kline crossDownMaKline = getCrossDownMaKline(currency, getExeDate(), CROSS_DOWN_MA_KLINE_COUNT_LIMIT);
             if(null !=crossDownMaKline){
                 // 下穿均线处的K线往前的均线斜率判断
-                List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, crossDownMaKline.getDate(), MA_CYCLE_COUNT + MA_COUNT);
+                List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, crossDownMaKline.getDate(), MA_CYCLE_COUNT + MA_COUNT);
                 if(klines.size()<MA_COUNT+MA_CYCLE_COUNT){
                     return;
                 }
@@ -49,10 +49,10 @@ public class MaFittingLineStrategyAgent extends StrategyAgent {
                 // 均线拟合直线判断
                 boolean b = MathUtil.lineFittingCheck(data, lsmParam, K_LIMIT, DISPERSION_DEGREE_LIMIT);
                 if(b){
-                    Kline lastKline = Kline.dao.getLastOneByCodeAndDate(currency.getCode(), Kline.KLINE_TYPE_K, getExeDate());
+                    Kline lastKline = Kline.dao.getLastOneByCurrencyIdAndDate(currency.getId(), Kline.KLINE_TYPE_K, getExeDate());
                     // 当前K线是阳线的最低点在下穿均线K线的最高点之下
                     if(lastKline.getClose()>lastKline.getOpen()&&lastKline.getMin()<crossDownMaKline.getMax()){
-                        Kline kline = Kline.dao.getByDate(currency.getCode(),Kline.KLINE_TYPE_K, getExeDate());
+                        Kline kline = Kline.dao.getByDate(currency.getId(),Kline.KLINE_TYPE_K, getExeDate());
                         kline.setBosp("0");
                         kline.update();
                         MailUtil.addCurrency2Buy(getExeDate(),strategy,currency);
@@ -70,7 +70,7 @@ public class MaFittingLineStrategyAgent extends StrategyAgent {
      * @return
      */
     private Kline getCrossDownMaKline(Currency currency,Date date,int findCount){
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, date, findCount+MA_CYCLE_COUNT);
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, date, findCount+MA_CYCLE_COUNT);
         Collections.reverse(klines);
         List<Double> doubles = MaUtil.calculateMA(klines, MA_CYCLE_COUNT);
         for (int i = doubles.size()-1; i >=1 ; i--) {

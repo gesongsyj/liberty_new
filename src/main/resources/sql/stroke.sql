@@ -8,65 +8,65 @@
 	#end
 #end
 
-#sql("getLastByCode")
-	select s.*
-	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+#sql("getLastByCurrencyId")
+	select *
+	from stroke
 	#set(flag=0)
-	#if(code)
-		#(flag==0?"where":"and") c.code = #para(code)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
 		#set(flag=1)
 	#end
 	#if(type)
-		#(flag==0?"where":"and") s.type = #para(type)
+		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
 	order by endDate desc
 #end
 
-#sql("getLastSomeByCode")
-	select s.*
-	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+#sql("getLastSomeByCurrencyId")
+	select *
+	from stroke
 	#set(flag=0)
-	#if(code)
-		#(flag==0?"where":"and") c.code = #para(code)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
 		#set(flag=1)
 	#end
 	#if(type)
-		#(flag==0?"where":"and") s.type = #para(type)
+		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
 	order by endDate desc limit #para(limit)
 #end
 
-#sql("listAllByCode")
-	select s.*
-	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+#sql("listAllByCurrencyId")
+	select *
+	from stroke
 	#set(flag=0)
-	#if(code)
-		#(flag==0?"where":"and") c.code = #para(code)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
 		#set(flag=1)
 	#end
 	#if(type)
-		#(flag==0?"where":"and") s.type = #para(type)
+		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
 	order by startDate asc
 #end
 
 #sql("listAfterByEndDate")
-	select s.*
-	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+	select *
+	from stroke
 	#set(flag=0)
-	#if(code)
-		#(flag==0?"where":"and") c.code = #para(code)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
 		#set(flag=1)
 	#end
 	#if(date)
-		#(flag==0?"where":"and") s.endDate > #para(date)
+		#(flag==0?"where":"and") endDate > #para(date)
 		#set(flag=1)
 	#end
 	#if(type)
-		#(flag==0?"where":"and") s.type = #para(type)
+		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
 	order by startDate asc
@@ -104,37 +104,37 @@
     delete from stroke where currencyId = #para(currencyId)
 #end
 #sql("getLastBeforeDate")
-	select s.*
-	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+	select *
+	from stroke
 	#set(flag=0)
-	#if(code)
-		#(flag==0?"where":"and") c.code = #para(code)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
 		#set(flag=1)
 	#end
 	#if(type)
-		#(flag==0?"where":"and") s.type = #para(type)
+		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
 	#if(date)
-		#(flag==0?"where":"and") s.endDate <= #para(date)
+		#(flag==0?"where":"and") endDate <= #para(date)
 		#set(flag=1)
 	#end
 	order by endDate desc
 #end
 #sql("listBeforeByEndDate")
-	select s.*
-	from currency c STRAIGHT_JOIN stroke s on s.currencyId=c.id
+	select *
+	from stroke
 	#set(flag=0)
-	#if(code)
-		#(flag==0?"where":"and") c.code = #para(code)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
 		#set(flag=1)
 	#end
 	#if(type)
-		#(flag==0?"where":"and") s.type = #para(type)
+		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
 	#if(date)
-		#(flag==0?"where":"and") s.endDate <= #para(date)
+		#(flag==0?"where":"and") endDate <= #para(date)
 		#set(flag=1)
 	#end
 	order by endDate asc

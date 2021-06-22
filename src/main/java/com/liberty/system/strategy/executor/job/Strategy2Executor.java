@@ -66,7 +66,7 @@ public class Strategy2Executor extends StrategyExecutor implements Executor {
 		} else {
 			storeLines.add(lastLine);
 			Date date = lastLine.getEndDate();
-			strokes = Stroke.dao.listAfterByEndDate(currency.getCode(), "k", date);
+			strokes = Stroke.dao.listAfterByEndDate(currency.getId(), "k", date);
 			if (strokes == null || strokes.size() == 0) {
 				return false;
 			}
@@ -103,9 +103,9 @@ public class Strategy2Executor extends StrategyExecutor implements Executor {
 					if(strokeBeforeCentre.getMax()<centre.getMax()||strokeAfterCentre.getMin()>centre.getMin()) {
 						return false;
 					}
-					List<Kline> klinesBeforeCentre = Kline.dao.getByDateRange(currency.getCode(), "k",
+					List<Kline> klinesBeforeCentre = Kline.dao.getByDateRange(currency.getId(), "k",
 							strokeBeforeCentre.getStartDate(), strokeBeforeCentre.getEndDate());
-					List<Kline> klinesAfterCentre = Kline.dao.getByDateRange(currency.getCode(), "k",
+					List<Kline> klinesAfterCentre = Kline.dao.getByDateRange(currency.getId(), "k",
 							strokeAfterCentre.getStartDate(), strokeAfterCentre.getEndDate());
 					double barBeforeCentre = 0;
 					double minDiffBeforeCentre=0;

@@ -23,7 +23,7 @@ public class LossCuttor{
 		for (Record record : rs) {
 			Currency currency = Currency.dao.findById(record.getInt("currencyId"));
 			Strategy strategy = Strategy.dao.findById(record.getInt("strategyId"));
-			List<Kline> klinesDate = Kline.dao.getListAfterDate(currency.getCode(), Kline.KLINE_TYPE_K, record.getDate("startDate"));
+			List<Kline> klinesDate = Kline.dao.getListAfterDate(currency.getId(), Kline.KLINE_TYPE_K, record.getDate("startDate"));
 			List<Kline> klines = downLoader.downLoad(currency, "k", "get", klinesDate.get(klinesDate.size()-1));
 			for (Kline kline : klines) {
 				if(kline.getMin()<record.getDouble("cutLine")) {

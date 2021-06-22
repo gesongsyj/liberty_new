@@ -51,7 +51,7 @@ public abstract class StrategyAgent implements AgentSyn {
     public void calibrateCustomize(Date startDate,Date endDate,String klineType) {
         long start = System.currentTimeMillis();
         init();
-        List<Kline> klines = Kline.dao.getByDateRange(inStrategyCurrencyList.get(0).getCode(), klineType, startDate, endDate);
+        List<Kline> klines = Kline.dao.getByDateRange(inStrategyCurrencyList.get(0).getId(), klineType, startDate, endDate);
         Date exeDate;
         for (Kline kline : klines) {
             exeDate = kline.getDate();

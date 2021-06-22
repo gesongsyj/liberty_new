@@ -15,12 +15,12 @@ import java.util.List;
 public class ReverseCheckStrategyAgent extends StrategyAgent {
     @Override
     public void executeSingle(Currency currency) {
-        Stroke lastStroke = Stroke.dao.getLastBeforeDate(currency.getCode(), Kline.KLINE_TYPE_M30K, DateUtil.strDate(DateUtil.getDay(currency.getFollowedDate()),"yyyy-MM-dd"));
+        Stroke lastStroke = Stroke.dao.getLastBeforeDate(currency.getId(), Kline.KLINE_TYPE_M30K, DateUtil.strDate(DateUtil.getDay(currency.getFollowedDate()),"yyyy-MM-dd"));
         Date strokeEndDate = null == lastStroke?null:lastStroke.getEndDate();
-        List<Kline> klinesInDateRange = Kline.dao.getByDateRange(currency.getCode(), Kline.KLINE_TYPE_M30K, strokeEndDate, getExeDate());
+        List<Kline> klinesInDateRange = Kline.dao.getByDateRange(currency.getId(), Kline.KLINE_TYPE_M30K, strokeEndDate, getExeDate());
         boolean b = reverseCheck(currency, klinesInDateRange, lastStroke);
         if(b){
-            Kline kline = Kline.dao.getByDate(currency.getCode(),Kline.KLINE_TYPE_M30K, getExeDate());
+            Kline kline = Kline.dao.getByDate(currency.getId(),Kline.KLINE_TYPE_M30K, getExeDate());
             kline.setBosp("0");
             kline.update();
             MailUtil.addCurrency2Buy(getExeDate(),strategy,currency);

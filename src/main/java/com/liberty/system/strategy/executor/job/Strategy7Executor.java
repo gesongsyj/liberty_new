@@ -82,17 +82,17 @@ public class Strategy7Executor extends StrategyExecutor implements Executor {
 
     @Override
     public boolean executeSingle(Currency currency) {
-        Stroke last1Stroke = Stroke.dao.getLastByCode(currency.getCode(), Kline.KLINE_TYPE_K);
+        Stroke last1Stroke = Stroke.dao.getLastByCurrencyId(currency.getId(), Kline.KLINE_TYPE_K);
         // 最后一笔方向向上
         if (null == last1Stroke || Stroke.STROKE_TYPE_DOWN.equals(last1Stroke.getDirection())) {
             return false;
         }
-        List<Kline> klinesByDateRange = Kline.dao.getByDateRange(currency.getCode(), Kline.KLINE_TYPE_K, last1Stroke.getStartDate(), last1Stroke.getEndDate());
+        List<Kline> klinesByDateRange = Kline.dao.getByDateRange(currency.getId(), Kline.KLINE_TYPE_K, last1Stroke.getStartDate(), last1Stroke.getEndDate());
         // 笔中有涨停K线
         if (!limitUpCheck(klinesByDateRange)) {
             return false;
         }
-        List<Kline> klinesAfter = Kline.dao.getByDateRange(currency.getCode(), Kline.KLINE_TYPE_K, last1Stroke.getEndDate(), new Date());
+        List<Kline> klinesAfter = Kline.dao.getByDateRange(currency.getId(), Kline.KLINE_TYPE_K, last1Stroke.getEndDate(), new Date());
         double turnoverRateSum = calcTurnoverRate(klinesAfter);
         // 换手率总量需大于阈值
         if (turnoverRateSum < TURNOVERRATESUM_LIMIT) {

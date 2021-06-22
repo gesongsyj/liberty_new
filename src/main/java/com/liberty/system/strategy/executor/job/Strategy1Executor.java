@@ -78,7 +78,7 @@ public class Strategy1Executor extends StrategyExecutor implements Executor {
 		} else {
 			storeLines.add(lastLine);
 			Date date = lastLine.getEndDate();
-			strokes = Stroke.dao.listAfterByEndDate(currency.getCode(), "k", date);
+			strokes = Stroke.dao.listAfterByEndDate(currency.getId(), "k", date);
 			if (strokes == null || strokes.size() == 0) {
 				return false;
 			}
@@ -150,7 +150,7 @@ public class Strategy1Executor extends StrategyExecutor implements Executor {
 						}
 						Centre lastCentre = buildLineCentre(list);
 						if (lastCentre != null && strokes.get(i + 2).getMin() > lastCentre.getCentreMax()) {
-							List<Kline> klines = Kline.dao.getListAfterDate(currency.getCode(), "k",
+							List<Kline> klines = Kline.dao.getListAfterDate(currency.getId(), "k",
 									strokes.get(i + 2).getEndDate());
 							for (Kline kline : klines) {
 								if (kline.getMin() <= lastCentre.getCentreMax()) {
@@ -178,7 +178,7 @@ public class Strategy1Executor extends StrategyExecutor implements Executor {
 							}
 							Centre lastCentre = buildLineCentre(list);
 							if (lastCentre != null && strokes.get(i + 2).getMin() > lastCentre.getCentreMax()) {
-								List<Kline> klines = Kline.dao.getListAfterDate(currency.getCode(), "k",
+								List<Kline> klines = Kline.dao.getListAfterDate(currency.getId(), "k",
 										strokes.get(i + 2).getEndDate());
 								for (Kline kline : klines) {
 									if (kline.getMin() <= lastCentre.getCentreMax()) {

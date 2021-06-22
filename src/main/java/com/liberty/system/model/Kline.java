@@ -38,22 +38,16 @@ public class Kline extends BaseKline<Kline> {
         return dao.paginate(qo.getCurrentPage(), qo.getPageSize(), sqlPara);
     }
 
-    public Kline getLastOneByCode(String code, String type) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
+    public Kline getLastOneByCurrencyId(int currencyId, String type) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type));
         Kline kline = dao.findFirst(sqlPara);
         return kline;
     }
 
-    public Kline getLastOneByCodeAndDate(String code, String type, Date date) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date));
+    public Kline getLastOneByCurrencyIdAndDate(int currencyId, String type, Date date) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date));
         Kline kline = dao.findFirst(sqlPara);
         return kline;
-    }
-
-    public List<Kline> getLast2ByCode(String code, String type) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
-        List<Kline> list = dao.find(sqlPara);
-        return list;
     }
 
     public List<Kline> getLast2ByCurrencyId(int currencyId, String type) {
@@ -85,27 +79,27 @@ public class Kline extends BaseKline<Kline> {
         }
     }
 
-    public List<Kline> listAllByCode(String code, String type) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type));
+    public List<Kline> listAllByCurrencyId(int currencyId, String type) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type));
         List<Kline> list = dao.find(sqlPara);
         return list;
     }
 
-    public List<Kline> listAllByCodeBeforeDate(String code, String type, Date date) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date));
+    public List<Kline> listAllByCurrencyIdBeforeDate(int currencyId, String type, Date date) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date));
         List<Kline> list = dao.find(sqlPara);
         return list;
     }
 
-    public List<Kline> getListAfterDate(String code, String type, Date date) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date));
+    public List<Kline> getListAfterDate(int currencyId, String type, Date date) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date));
         List<Kline> list = dao.find(sqlPara);
         return list;
     }
 
-    public List<Kline> getByDateRange(String code, String type, Date startDate, Date endDate) {
+    public List<Kline> getByDateRange(int currencyId, String type, Date startDate, Date endDate) {
         SqlPara sqlPara = getSqlParaFromTemplate(
-                Kv.by("code", code).set("type", type).set("startDate", startDate).set("endDate", endDate));
+                Kv.by("currencyId", currencyId).set("type", type).set("startDate", startDate).set("endDate", endDate));
         List<Kline> list = dao.find(sqlPara);
         return list;
     }
@@ -116,8 +110,8 @@ public class Kline extends BaseKline<Kline> {
         return list;
     }
 
-    public List<Kline> listBeforeDate(String code, String type, Date date, int limit) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date).set("limit", limit));
+    public List<Kline> listBeforeDate(int currencyId, String type, Date date, int limit) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date).set("limit", limit));
         List<Kline> list = dao.find(sqlPara);
         return list;
     }
@@ -127,8 +121,8 @@ public class Kline extends BaseKline<Kline> {
         int update = Db.update(sqlPara);
     }
 
-    public Kline getByDate(String code, String type, Date date) {
-        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("code", code).set("type", type).set("date", date));
+    public Kline getByDate(int currencyId, String type, Date date) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date));
         Kline kline = dao.findFirst(sqlPara);
         return kline;
     }

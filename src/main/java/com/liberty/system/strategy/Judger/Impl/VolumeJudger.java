@@ -19,7 +19,7 @@ public class VolumeJudger implements Judger {
 
     @Override
     public boolean judgeItem(Currency currency, Date date) {
-        List<Kline> klines = Kline.dao.listBeforeDate(currency.getCode(), Kline.KLINE_TYPE_K, date, volumeParam.getAvgCount());
+        List<Kline> klines = Kline.dao.listBeforeDate(currency.getId(), Kline.KLINE_TYPE_K, date, volumeParam.getAvgCount());
         if(klines.size()<volumeParam.getAvgCount()){
             return false;
         }

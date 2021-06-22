@@ -61,7 +61,7 @@ public class Calibrator {
 //                klineController.createLine(currency.getCode());
                 Vector<Currency> result = executor.execute(currency.getCode());
                 if (!result.isEmpty()) {
-                    Kline kline = Kline.dao.getByDate(currency.getCode(), Kline.KLINE_TYPE_K, klines.get(i).getDate());
+                    Kline kline = Kline.dao.getByDate(currency.getId(), Kline.KLINE_TYPE_K, klines.get(i).getDate());
                     Db.tx(() -> {
                         kline.setBosp("0");
                         kline.update();
@@ -99,7 +99,7 @@ public class Calibrator {
             }
         }
         for (Date date : retDate) {
-            Kline kline = Kline.dao.getByDate(currency.getCode(), Kline.KLINE_TYPE_K, date);
+            Kline kline = Kline.dao.getByDate(currency.getId(), Kline.KLINE_TYPE_K, date);
             if(kline!=null){
                 Db.tx(() -> {
                     kline.setBosp("0");
