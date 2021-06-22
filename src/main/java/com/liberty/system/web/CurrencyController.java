@@ -27,7 +27,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 查询所有策略
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void queryStrategy() {
 		List<Strategy> ss = Strategy.dao.getAll();
 		renderJson(new ResultMsg(ResultStatusCode.OK, ss));
@@ -36,7 +36,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 添加到策略池
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void addStrategy() {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		CurrencyQueryObject qo = getBean(CurrencyQueryObject.class, "qo");
@@ -89,7 +89,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 对该股添加标记,后续可能有期望的走势出现
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void addFollow() {
 		CurrencyQueryObject qo = getBean(CurrencyQueryObject.class, "qo");
 		String currencyId = paras.get("currencyId");
@@ -104,7 +104,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 对该股添加标记,后续可能有期望的走势出现
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void addFollowForStarage() {
 		CurrencyQueryObject qo = getBean(CurrencyQueryObject.class, "qo");
 		String currencyId = paras.get("currencyId");
@@ -176,7 +176,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 确认添加该股至数据库,从财经网站爬取k线数据,生成笔和线段
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void add() {
 //		if (!paras.containsKey("code") || !paras.containsKey("name") || !paras.containsKey("currencyType")) {
 //			renderJson(new ResultMsg(ResultStatusCode.INVALID_INPUT));
@@ -212,7 +212,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 删除该股
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void delete() {
 		CurrencyQueryObject qo = getBean(CurrencyQueryObject.class, "qo");
 		String currencyId = paras.get("currencyId");
@@ -228,7 +228,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 设置止损线
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void cutLine() {
 		CurrencyQueryObject qo = getBean(CurrencyQueryObject.class, "qo");
 		String id = paras.get("id");
@@ -246,7 +246,7 @@ public class CurrencyController extends BaseController {
 	/**
 	 * 从策略池移除
 	 */
-	@Before(Tx.class)
+//	@Before(Tx.class)
 	public void removeFromStrategy() {
 		CurrencyQueryObject qo = getBean(CurrencyQueryObject.class, "qo");
 		String csId = paras.get("csId");

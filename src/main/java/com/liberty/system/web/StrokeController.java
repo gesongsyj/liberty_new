@@ -3,6 +3,8 @@ package com.liberty.system.web;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Page;
 import com.liberty.common.utils.DateUtil;
+import com.liberty.common.utils.ResultMsg;
+import com.liberty.common.utils.ResultStatusCode;
 import com.liberty.common.web.BaseController;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Stroke;
@@ -36,7 +38,9 @@ public class StrokeController extends BaseController {
         Executor executor = new Strategy9Executor();
         Calibrator calibrator = new Calibrator(executor);
         Currency currency = Currency.dao.findByCode("600668");
-        Date startDate = DateUtil.strDate("2010-05-01", "yyyy-MM-dd");
+        Date startDate = DateUtil.strDate("2019-08-05", "yyyy-MM-dd");
         calibrator.calibrate(currency,startDate);
+//        calibrator.calibrate(currency,null);
+        renderText("ok");
     }
 }

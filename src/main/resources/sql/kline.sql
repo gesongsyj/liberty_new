@@ -58,6 +58,22 @@
 	limit 0,2
 #end
 
+#sql("getLast2ByCurrencyId")
+	select *
+	from kline
+	#set(flag=0)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId=#para(currencyId)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") type=#para(type)
+		#set(flag=1)
+	#end
+	order by date desc
+	limit 0,2
+#end
+
 #sql("listAllByCode")
 	select k.*
 	from currency c STRAIGHT_JOIN kline k on k.currencyId=c.id

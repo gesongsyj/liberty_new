@@ -103,7 +103,7 @@ public class CoreConfig extends JFinalConfig {
 	@Override
 	public void configInterceptor(Interceptors me) {
 		me.add(new ShiroInterceptor());
-		me.add(new Tx());
+//		me.add(new Tx());
 		me.add(new CoreInterceptor());
 		me.add(new SessionInViewInterceptor());
 	}

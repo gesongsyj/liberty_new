@@ -1,7 +1,9 @@
 package com.liberty.system.web;
 
+import com.jfinal.aop.Before;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfplugin.mail.MailKit;
 import com.liberty.common.constant.ConstantDefine;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
@@ -240,7 +242,7 @@ public class KlineController extends BaseController {
         for (Record record : klineType) {
             Currency currency = Currency.dao.findByCode(includeCurrencyCode);
             // 取出最后两条数据,最新的一条数据可能随时变化,新增数据时此条记录先删除
-            List<Kline> lastTwo = Kline.dao.getLast2ByCode(includeCurrencyCode, record.getStr("key"));
+            List<Kline> lastTwo = Kline.dao.getLast2ByCurrencyId(currency.getId(), record.getStr("key"));
             Kline lastKline = null;
             if (lastTwo == null || lastTwo.size() <= 1) {
                 if (lastTwo.size() == 1) {
@@ -308,7 +310,7 @@ public class KlineController extends BaseController {
         renderText("ok");
     }
 
-    //	@Before(Tx.class)
+//    @Before(Tx.class)
     public void createStroke_bak(String includeCurrencyCode) {
         String sql = "select * from dictionary where type='klineType_gp'";
         List<Record> klineType = Db.find(sql);
