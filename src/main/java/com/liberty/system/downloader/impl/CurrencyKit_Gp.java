@@ -34,13 +34,15 @@ public class CurrencyKit_Gp implements CurrencyKit {
 	public Vector<Currency> update() {
 		Vector<Currency> cs = new Vector<Currency>();
 		for (int i = 1; i <= pagesize; i++) {
+//			String url_shanghai = "http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112408791025184653198_"+System.currentTimeMillis()+"&pn="+i+"&pz=2000&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:1+t:2,m:1+t:23&fields=f12,f13,f14&_="+System.currentTimeMillis();
+//			String url_shenzhen = "http://push2.eastmoney.com/api/qt/clist/get?cb=jQuery112408791025184653198_"+System.currentTimeMillis()+"&pn="+i+"&pz=2000&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:80&fields=f12,f13,f14&_="+System.currentTimeMillis();
 			String url_shanghai = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C.2&st=(ChangePercent)&sr=-1&p="
 					+ i + "&ps=2000&_=" + System.currentTimeMillis();
 			String url_shenzhen = "http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?type=CT&token=4f1862fc3b5e77c150a2b985b12db0fd&sty=FCOIATC&cmd=C._SZAME&st=(ChangePercent)&sr=-1&p="
 					+ i + "&ps=2000&_=" + System.currentTimeMillis();
-			//上证100只股票
+			//上证100
 			queryCurrency(cs,url_shanghai);
-			//深证100只股票
+			//深证100
 			queryCurrency(cs,url_shenzhen);
 		}
 		return cs;

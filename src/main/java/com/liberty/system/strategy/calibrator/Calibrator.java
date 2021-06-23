@@ -2,6 +2,7 @@ package com.liberty.system.strategy.calibrator;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.liberty.common.utils.DateUtil;
 import com.liberty.system.downloader.DownLoader;
 import com.liberty.system.downloader.impl.CalibratorDownLoader;
 import com.liberty.system.downloader.impl.DfcfDownLoader;
@@ -78,6 +79,7 @@ public class Calibrator {
                 return true;
             });
 //              klineController.createLine(currency.getCode());
+            executor.setExecuteDate(DateUtil.getDay(klines.get(i).getDate()));
             Vector<Currency> result = executor.execute(currency.getCode());
             if (!result.isEmpty()) {
                 retDate.add(klines.get(i).getDate());

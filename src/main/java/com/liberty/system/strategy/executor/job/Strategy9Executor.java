@@ -40,7 +40,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
             }
         }
         if (stayCurrency.size() != 0) {
-            MailUtil.sendMailToBuy(stayCurrency, this.getStrategy());
+            MailUtil.sendMailToBuy(stayCurrency, this);
         }
         System.out.println("策略9执行完毕!");
         long end = System.currentTimeMillis();
@@ -57,12 +57,12 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         }
         int i = strokes.size() - 1;
         Stroke currentStroke = strokes.get(i);
-        double currentMax = currentStroke.getMax();
-        double currentMin = currentStroke.getMin();
         // 最后一笔方向向上,直接返回
         if (currentStroke.getDirection().equals(ConstantDefine.DIRECTION_UP)) {
             return false;
         }
+        double currentMax = currentStroke.getMax();
+        double currentMin = currentStroke.getMin();
         // 最后一笔方向向下,找到最近的一个三笔重叠区域
         while (i - 3 > 0 && Stroke.dao.overlap(strokes.get(i - 1), strokes.get(i - 2), strokes.get(i - 3)) != 0) {
             i = i - 2;
@@ -78,6 +78,11 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         double min = getMin(strokes.get(i - 1).getMin(), strokes.get(i - 2).getMin(), strokes.get(i - 3).getMin());
         // 当前笔的最小值没有突破该重叠区域
         if (currentStroke.getMin() >= min) {
+            return false;
+        }
+        List<Kline> klinesAfterLastStroke = Kline.dao.getListAfterDate(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(strokes.size() - 1).getEndDate());
+        // 时机已过
+        if (klinesAfterLastStroke.size() > 5) {
             return false;
         }
         while (true) {
