@@ -13,7 +13,7 @@ import com.jfinal.plugin.IPlugin;
  *
  */
 public class ThreadPoolPlugin implements IPlugin {
-	private static final int ThreadPool_coreSize = Runtime.getRuntime().availableProcessors()*4;
+	private static final int ThreadPool_coreSize = Runtime.getRuntime().availableProcessors();
 	private static final int ThreadPool_maxSize = ThreadPool_coreSize*2;
 	private static final int ThreadPool_keepAliveTime = 10;
 	private static final int ThreadPool_queueSize = 20000;

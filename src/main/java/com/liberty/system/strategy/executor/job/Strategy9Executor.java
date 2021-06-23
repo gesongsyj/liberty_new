@@ -40,7 +40,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
             }
         }
         if (stayCurrency.size() != 0) {
-            MailUtil.sendMailToBuy(stayCurrency, this);
+//            MailUtil.sendMailToBuy(stayCurrency, this);
         }
         System.out.println("策略9执行完毕!");
         long end = System.currentTimeMillis();
@@ -72,7 +72,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
             return false;
         }
         // 如果找重叠区域往后找了几笔,需要更新最大值,如果没有往后找,重新赋值也没有影响
-        currentMax = strokes.get(i - 1).getMax();
+        currentMax = strokes.get(i).getMax();
         // 找到三笔重叠,获取重叠区域的最大最小值
         double max = getMax(strokes.get(i - 1).getMax(), strokes.get(i - 2).getMax(), strokes.get(i - 3).getMax());
         double min = getMin(strokes.get(i - 1).getMin(), strokes.get(i - 2).getMin(), strokes.get(i - 3).getMin());
@@ -82,7 +82,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         }
         List<Kline> klinesAfterLastStroke = Kline.dao.getListAfterDate(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(strokes.size() - 1).getEndDate());
         // 时机已过
-        if (klinesAfterLastStroke.size() > 5) {
+        if (klinesAfterLastStroke.size() > 4) {
             return false;
         }
         while (true) {
@@ -105,13 +105,17 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
             } else {
                 double compareMax = strokes.get(i - 4).getMax();
                 double compareMin = strokes.get(i - 4).getMin();
+                // 重叠则中枢扩展
+                while (i - 5 >= 0 && Stroke.dao.overlap(strokes.get(i - 3), strokes.get(i - 4), strokes.get(i - 5)) == 0) {
+                    i = i - 2;
+                }
                 // 可比较K线的最大值突破该区域,比较该笔与当前笔对应的macd面积[面积不好算,先比较跌幅吧]
                 // 用来对比的可能也不是一笔,得往前找到重叠的才算
                 while (i - 7 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 6), strokes.get(i - 7)) != 0) {
                     i = i - 2;
                 }
                 // 即使上一步的while没有执行i-2操作,下面的重新赋值也没有问题
-                compareMax = strokes.get(i - 5).getMax();
+                compareMax = strokes.get(i - 4).getMax();
                 if (currentMax - currentMin < compareMax - compareMin) {
                     return true;
                 }

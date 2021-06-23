@@ -58,6 +58,20 @@ public class StrokeController extends BaseController {
         String startDateStr = paras.get("startDate");
         final List<Currency> cs = currencies;
         ThreadPoolExecutor pool = ThreadPoolKit.getExecutor();
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10000);
+                    while (pool.getQueue().size()>0) {
+                        System.out.println("=========>当前线程池信息: \n" + "存活线程数===" + pool.getActiveCount() + ";\n完成任务数===" + pool.getCompletedTaskCount() + ";\n总任务数===" + pool.getTaskCount());
+                        Thread.sleep(10000);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         List<Future> futureList = new ArrayList<>();
         for (int i = 0; i < cs.size(); i++) {
             int index = i;

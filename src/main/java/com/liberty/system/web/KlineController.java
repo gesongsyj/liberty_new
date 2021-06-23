@@ -262,9 +262,9 @@ public class KlineController extends BaseController {
             if (klineList == null || klineList.size() == 0) {
                 continue;
             }
-            if (null != lastKline && klineList.get(0).getDate().getTime() < lastKline.getDate().getTime()) {
-                lastKlineMap.put(includeCurrencyCode + "_" + record.getStr("key"), null);
-            }
+//            if (null != lastKline && klineList.get(0).getDate().getTime() < lastKline.getDate().getTime()) {
+//                lastKlineMap.put(includeCurrencyCode + "_" + record.getStr("key"), null);
+//            }
 
             klineMap.put(currency.getCode() + "_" + record.getStr("key"), klineList);
             Kline.dao.saveMany(klineMap, lastKlineMap);

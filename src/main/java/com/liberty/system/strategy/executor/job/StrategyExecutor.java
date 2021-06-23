@@ -3,31 +3,29 @@ package com.liberty.system.strategy.executor.job;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
-import com.liberty.common.utils.CacheUtil;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.system.model.Centre;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Strategy;
 import com.liberty.system.model.Stroke;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public abstract class StrategyExecutor {
+    // 存储执行日期,多线程跑的时候确保线程安全
+    protected ThreadLocal<String> localExecuteDate = new ThreadLocal<>();
     protected Strategy strategy;
-    protected String executeDate;
 
     public String getExecuteDate() {
-        return executeDate == null ? DateUtil.getDay() : executeDate;
+        return localExecuteDate.get() == null ? DateUtil.getDay() : localExecuteDate.get();
     }
 
     public void setExecuteDate(String executeDate) {
-        this.executeDate = executeDate;
+        this.localExecuteDate.set(executeDate);
     }
 
     public Strategy getStrategy() {
