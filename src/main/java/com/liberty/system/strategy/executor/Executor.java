@@ -16,4 +16,8 @@ public interface Executor {
 	String getExecuteDate();
 
 	void setExecuteDate(String executeDate);
+
+	boolean isCalibrate();
+
+	void setCalibrate(boolean value);
 }

@@ -30,6 +30,7 @@ import com.liberty.system.strategy.agent.impl.UpwardTrendStrategyAgent;
 import com.liberty.system.strategy.calibrator.Calibrator;
 import com.liberty.system.strategy.executor.Executor;
 import com.liberty.system.strategy.executor.job.*;
+import com.liberty.system.web.KlineController;
 import net.dreamlu.event.EventPlugin;
 
 import java.util.Calendar;
@@ -37,89 +38,89 @@ import java.util.Date;
 import java.util.List;
 
 public class CoreConfig extends JFinalConfig {
-	@Override
-	public void configConstant(Constants me) {
-		loadPropertyFile("jfinal.properties");
-		me.setEncoding("UTF-8");
-		me.setDevMode(true);
-		me.setViewType(ViewType.FREE_MARKER);
-	}
+    @Override
+    public void configConstant(Constants me) {
+        loadPropertyFile("jfinal.properties");
+        me.setEncoding("UTF-8");
+        me.setDevMode(true);
+        me.setViewType(ViewType.FREE_MARKER);
+    }
 
-	@Override
-	public void configRoute(Routes me) {
-		me.add(new CoreRoutes());
-	}
+    @Override
+    public void configRoute(Routes me) {
+        me.add(new CoreRoutes());
+    }
 
-	@Override
-	public void configPlugin(Plugins me) {
-		// 读取jdbc配置
-		final String url = getProperty("jdbcUrl");
-		final String username = getProperty("username");
-		final String password = getProperty("password");
-		final Integer initialSize = Integer.parseInt(getProperty("initialSize"));
-		final Integer minIdle = Integer.parseInt(getProperty("minIdle"));
-		final Integer maxActive = Integer.parseInt(getProperty("maxActive"));
-		final String driverClass = getProperty("driverClass");
+    @Override
+    public void configPlugin(Plugins me) {
+        // 读取jdbc配置
+        final String url = getProperty("jdbcUrl");
+        final String username = getProperty("username");
+        final String password = getProperty("password");
+        final Integer initialSize = Integer.parseInt(getProperty("initialSize"));
+        final Integer minIdle = Integer.parseInt(getProperty("minIdle"));
+        final Integer maxActive = Integer.parseInt(getProperty("maxActive"));
+        final String driverClass = getProperty("driverClass");
 
-		DruidPlugin druidPlugin = new DruidPlugin(url, username, password, driverClass);
-		druidPlugin.set(initialSize, minIdle, maxActive);
-		druidPlugin.setFilters("stat,wall");// 监控统计："stat" ;防SQL注入："wall"
-		me.add(druidPlugin);
-		// 实体映射
-		ActiveRecordPlugin arp = new ActiveRecordPlugin(druidPlugin);
-		arp.setShowSql(true);
-		arp.setContainerFactory(new OrderedFieldContainerFactory());// 字段有序，保持和查询的顺序一致
-		// 设置sql存放的根路径
-		String a= PathKit.getRootClassPath();
-		String b= PathKit.getWebRootPath();
-		arp.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/sql");
-		arp.addSqlTemplate("all.sql");
-		me.add(arp);
-		// DB映射
-		_MappingKit.mapping(arp);
+        DruidPlugin druidPlugin = new DruidPlugin(url, username, password, driverClass);
+        druidPlugin.set(initialSize, minIdle, maxActive);
+        druidPlugin.setFilters("stat,wall");// 监控统计："stat" ;防SQL注入："wall"
+        me.add(druidPlugin);
+        // 实体映射
+        ActiveRecordPlugin arp = new ActiveRecordPlugin(druidPlugin);
+        arp.setShowSql(true);
+        arp.setContainerFactory(new OrderedFieldContainerFactory());// 字段有序，保持和查询的顺序一致
+        // 设置sql存放的根路径
+        String a = PathKit.getRootClassPath();
+        String b = PathKit.getWebRootPath();
+        arp.setBaseSqlTemplatePath(PathKit.getRootClassPath() + "/sql");
+        arp.addSqlTemplate("all.sql");
+        me.add(arp);
+        // DB映射
+        _MappingKit.mapping(arp);
 
-		// 定时任务
-		QuartzPlugin quartz = new QuartzPlugin();
-		quartz.setJobs("job.properties");
-		me.add(quartz);
+        // 定时任务
+        QuartzPlugin quartz = new QuartzPlugin();
+        quartz.setJobs("job.properties");
+        me.add(quartz);
 
-		// 线程池插件
-		ThreadPoolPlugin threadPool = new ThreadPoolPlugin();
-		me.add(threadPool);
+        // 线程池插件
+        ThreadPoolPlugin threadPool = new ThreadPoolPlugin();
+        me.add(threadPool);
 
-		// 邮件插件
-		MailPlugin mailPlugin = new MailPlugin(PropKit.use("mail.properties").getProperties());
-		me.add(mailPlugin);
+        // 邮件插件
+        MailPlugin mailPlugin = new MailPlugin(PropKit.use("mail.properties").getProperties());
+        me.add(mailPlugin);
 
-		// 初始化事件插件
-		EventPlugin plugin = new EventPlugin();
-		plugin.async(); // 开启全局异步
-		plugin.scanJar(); // 设置扫描jar包，默认不扫描
-		// plugin.scanPackage("com.hotel.service.event"); // 设置监听器默认包，默认全扫描
-		me.add(plugin);
+        // 初始化事件插件
+        EventPlugin plugin = new EventPlugin();
+        plugin.async(); // 开启全局异步
+        plugin.scanJar(); // 设置扫描jar包，默认不扫描
+        // plugin.scanPackage("com.hotel.service.event"); // 设置监听器默认包，默认全扫描
+        me.add(plugin);
 
-	}
+    }
 
-	@Override
-	public void configInterceptor(Interceptors me) {
-		me.add(new ShiroInterceptor());
+    @Override
+    public void configInterceptor(Interceptors me) {
+        me.add(new ShiroInterceptor());
 //		me.add(new Tx());
-		me.add(new CoreInterceptor());
-		me.add(new SessionInViewInterceptor());
-	}
+        me.add(new CoreInterceptor());
+        me.add(new SessionInViewInterceptor());
+    }
 
-	@Override
-	public void configHandler(Handlers me) {
+    @Override
+    public void configHandler(Handlers me) {
 
-	}
+    }
 
-	@Override
-	public void configEngine(Engine me) {
+    @Override
+    public void configEngine(Engine me) {
 
-	}
+    }
 
-	@Override
-	public void afterJFinalStart() {
+    @Override
+    public void afterJFinalStart() {
 
 //		CurrencyController currencyController = new CurrencyController();
 //		currencyController.updateCurrency();
@@ -134,18 +135,18 @@ public class CoreConfig extends JFinalConfig {
 
 //		stratege1Executor executor = new stratege1Executor();
 //		executor.execute(null);
-		
-//		KlineController klineController = new KlineController();
-//		List<Currency> listAll = Currency.dao.listAll();
-//		klineController.multiProData(listAll);
-		
+
+        KlineController klineController = new KlineController();
+        List<Currency> listAll = Currency.dao.listAll();
+        klineController.multiProData(listAll);
+
 //		KlineController klineController = new KlineController();
 //		List<Currency> listAll = Currency.dao.listAll();
 //		for (Currency currency : listAll) {
 //			klineController.downloadData(currency.getCode());
 //		}
-		
-		//执行策略三
+
+        //执行策略三
 //		Executor executor1 = new Strategy3Executor();
 //		executor1.execute("603288");
 //		Executor executor2 = new Strategy4Executor();
@@ -154,6 +155,8 @@ public class CoreConfig extends JFinalConfig {
 //		executor3.execute(null);
 //		Executor executor4 = new Strategy4Executor();
 //		executor4.execute(null);
+        Executor executor9 = new Strategy9Executor();
+        executor9.execute(null);
 //		AgentSyn agentSyn = new UpwardTrendStrategyAgent();
 //		agentSyn.calibrate(DateUtil.strDate("2000-08-05","yyyy-MM-dd"),DateUtil.strDate("2020-02-08","yyyy-MM-dd"));
 
@@ -166,10 +169,10 @@ public class CoreConfig extends JFinalConfig {
 //		AgentSyn agentSyn = new BoxBreakStrategyAgent();
 //		agentSyn.execute();
 //		agentSyn.calibrate(DateUtil.strDate("2019-12-31","yyyy-MM-dd"),DateUtil.strDate("2020-02-16","yyyy-MM-dd"));
-		//策略组合
+        //策略组合
 //		JudgerExe judgerExe = new JudgerExe();
 //		judgerExe.execute();
-		// 验证器
+        // 验证器
 //		Executor executor = new Strategy9Executor();
 //		Calibrator calibrator = new Calibrator(executor);
 //		Currency currency = Currency.dao.findByCode("600668");
@@ -180,6 +183,6 @@ public class CoreConfig extends JFinalConfig {
 //			System.out.println("这是第"+i+"只股票");
 //			executor.execute(allCurrency.get(i).getCode());
 //		}
-	}
+    }
 
 }

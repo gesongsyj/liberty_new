@@ -2,12 +2,15 @@ package com.liberty.system.strategy.executor.job;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfplugin.mail.MailKit;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
 import com.liberty.common.utils.DateUtil;
+import com.liberty.common.utils.MailUtil;
 import com.liberty.system.model.Centre;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Strategy;
 import com.liberty.system.model.Stroke;
+import com.liberty.system.strategy.executor.Executor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,15 @@ public abstract class StrategyExecutor {
     // 存储执行日期,多线程跑的时候确保线程安全
     protected ThreadLocal<String> localExecuteDate = new ThreadLocal<>();
     protected Strategy strategy;
+    protected boolean isCalibrate = false;
+
+    public boolean isCalibrate() {
+        return isCalibrate;
+    }
+
+    public void setCalibrate(boolean value) {
+        this.isCalibrate = value;
+    }
 
     public String getExecuteDate() {
         return localExecuteDate.get() == null ? DateUtil.getDay() : localExecuteDate.get();
@@ -34,6 +46,21 @@ public abstract class StrategyExecutor {
 
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
+    }
+
+    public void sendMailToBuy(Vector<Currency> stayCurrency, Executor executor) {
+        System.out.println("sendMailToBuy:" + stayCurrency.size());
+        if (stayCurrency.size() != 0 && !this.isCalibrate()) {
+            MailUtil.sendMailToBuy(stayCurrency, executor);
+        }
+    }
+
+    public void sendMailTimecost(double time) {
+        String tmp = "策略[" + this.getStrategy().getDescribe() + "]此次执行耗时:" + time + "分钟!";
+        System.out.println(tmp);
+        if (!this.isCalibrate()) {
+            MailKit.send("530256489@qq.com", null, "策略[" + this.getStrategy().getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
+        }
     }
 
     public void multiProExe(List<Currency> cs, Vector<Currency> sc) {

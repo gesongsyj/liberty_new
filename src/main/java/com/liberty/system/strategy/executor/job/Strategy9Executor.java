@@ -39,13 +39,11 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 }
             }
         }
-        if (stayCurrency.size() != 0) {
-//            MailUtil.sendMailToBuy(stayCurrency, this);
-        }
+        sendMailToBuy(stayCurrency, this);
         System.out.println("策略9执行完毕!");
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
-//        MailKit.send("530256489@qq.com", null, "策略[" + strategy.getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
+        sendMailTimecost(time);
         return stayCurrency;
     }
 
@@ -64,7 +62,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         double currentMax = currentStroke.getMax();
         double currentMin = currentStroke.getMin();
         // 最后一笔方向向下,找到最近的一个三笔重叠区域
-        while (i - 3 > 0 && Stroke.dao.overlap(strokes.get(i - 1), strokes.get(i - 2), strokes.get(i - 3)) != 0) {
+        while (i - 3 > 0 && Stroke.dao.overlap(strokes.get(i - 3), strokes.get(i - 2), strokes.get(i - 1)) != 0) {
             i = i - 2;
         }
         // 没有三笔重叠;或者直到第一根线才有三笔重叠,没有可比较的K线了
@@ -106,12 +104,12 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 double compareMax = strokes.get(i - 4).getMax();
                 double compareMin = strokes.get(i - 4).getMin();
                 // 重叠则中枢扩展
-                while (i - 5 >= 0 && Stroke.dao.overlap(strokes.get(i - 3), strokes.get(i - 4), strokes.get(i - 5)) == 0) {
+                while (i - 5 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 4), strokes.get(i - 3)) == 0) {
                     i = i - 2;
                 }
                 // 可比较K线的最大值突破该区域,比较该笔与当前笔对应的macd面积[面积不好算,先比较跌幅吧]
                 // 用来对比的可能也不是一笔,得往前找到重叠的才算
-                while (i - 7 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 6), strokes.get(i - 7)) != 0) {
+                while (i - 7 >= 0 && Stroke.dao.overlap(strokes.get(i - 7), strokes.get(i - 6), strokes.get(i - 5)) != 0) {
                     i = i - 2;
                 }
                 // 即使上一步的while没有执行i-2操作,下面的重新赋值也没有问题

@@ -28,7 +28,7 @@ public class Stroke extends BaseStroke<Stroke> {
 	private List<Kline> allKlines = new ArrayList<Kline>();
 
 	/**
-	 * 判断三笔是否重叠
+	 * 按时间升序的三笔,判断三笔是否重叠
 	 *
 	 * @param s1
 	 * @param s2
