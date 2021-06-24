@@ -136,9 +136,9 @@ public class CoreConfig extends JFinalConfig {
 //		stratege1Executor executor = new stratege1Executor();
 //		executor.execute(null);
 
-        KlineController klineController = new KlineController();
-        List<Currency> listAll = Currency.dao.listAll();
-        klineController.multiProData(listAll);
+//        KlineController klineController = new KlineController();
+//        List<Currency> listAll = Currency.dao.listAll();
+//        klineController.multiProData(listAll);
 
 //		KlineController klineController = new KlineController();
 //		List<Currency> listAll = Currency.dao.listAll();
@@ -155,8 +155,8 @@ public class CoreConfig extends JFinalConfig {
 //		executor3.execute(null);
 //		Executor executor4 = new Strategy4Executor();
 //		executor4.execute(null);
-        Executor executor9 = new Strategy9Executor();
-        executor9.execute(null);
+//        Executor executor9 = new Strategy9Executor();
+//        executor9.execute(null);
 //		AgentSyn agentSyn = new UpwardTrendStrategyAgent();
 //		agentSyn.calibrate(DateUtil.strDate("2000-08-05","yyyy-MM-dd"),DateUtil.strDate("2020-02-08","yyyy-MM-dd"));
 

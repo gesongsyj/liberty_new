@@ -80,4 +80,12 @@ public abstract class BaseCurrency<T extends BaseCurrency> extends SuperModel<T>
         return get("followedDate");
     }
 
+    public T setCalibrated(java.lang.Boolean calibrated) {
+        set("calibrated", calibrated);
+        return (T) this;
+    }
+
+    public java.lang.Boolean getCalibrated() {
+        return get("calibrated");
+    }
 }

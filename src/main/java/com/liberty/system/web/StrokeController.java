@@ -46,6 +46,7 @@ public class StrokeController extends BaseController {
     public void calibrate() {
         // 验证器
         Executor executor = new Strategy9Executor();
+        executor.setCalibrate(true);
         Calibrator calibrator = new Calibrator(executor);
         String code = paras.get("code");
         List<Currency> currencies = new ArrayList<>();
@@ -74,6 +75,9 @@ public class StrokeController extends BaseController {
         });
         List<Future> futureList = new ArrayList<>();
         for (int i = 0; i < cs.size(); i++) {
+            if(cs.get(i).getCalibrated()){
+                continue;
+            }
             int index = i;
             Future<?> future = pool.submit(new Runnable() {
                 @Override
@@ -85,6 +89,8 @@ public class StrokeController extends BaseController {
                     } else {
                         calibrator.calibrate(currency, null);
                     }
+                    currency.setCalibrated(true);
+                    currency.update();
                 }
             });
             futureList.add(future);
