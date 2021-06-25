@@ -86,7 +86,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         while (true) {
             // 用来比较的K线最大值没有突破该区域
             if (strokes.get(i - 4).getMax() <= max) {
-                if (i - 5 <= 0) {
+                if (i - 6 < 0) {
                     return false;
                 }
                 // i-6的最大值在重叠区域最小值以下
@@ -101,10 +101,13 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 }
                 i = i - 2;
             } else {
+                if (i - 4 < 0) {
+                    return false;
+                }
                 double compareMax = strokes.get(i - 4).getMax();
                 double compareMin = strokes.get(i - 4).getMin();
-                // 重叠则中枢扩展
-                while (i - 5 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 4), strokes.get(i - 3)) == 0) {
+                // 重叠则中枢扩展,确保有用来比较的一笔i-4,所以是i-6
+                while (i - 6 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 4), strokes.get(i - 3)) == 0) {
                     i = i - 2;
                 }
                 // 可比较K线的最大值突破该区域,比较该笔与当前笔对应的macd面积[面积不好算,先比较跌幅吧]
