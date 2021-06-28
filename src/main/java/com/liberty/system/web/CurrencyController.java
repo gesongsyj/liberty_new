@@ -15,8 +15,8 @@ import com.liberty.common.web.BaseController;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.downloader.CurrencyKit;
 import com.liberty.system.downloader.impl.CurrencyKit_Gp;
+import com.liberty.system.model.*;
 import com.liberty.system.model.Currency;
-import com.liberty.system.model.Strategy;
 import com.liberty.system.query.CurrencyQueryObject;
 import com.liberty.system.strategy.calibrator.Calibrator;
 import com.liberty.system.strategy.executor.Executor;
@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 public class CurrencyController extends BaseController {
     /**
@@ -271,7 +272,9 @@ public class CurrencyController extends BaseController {
      */
     public void calibrate() {
         // 验证器
-        Executor executor = new Strategy9Executor();
+        // Strategy9Executor就传9
+        int executorIndex = Integer.parseInt(paras.get("executorIndex"));
+        Executor executor = ExecutorFactory.buildExecutor(executorIndex);
         executor.setCalibrate(true);
         Calibrator calibrator = new Calibrator(executor);
         String code = paras.get("code");
@@ -338,6 +341,11 @@ public class CurrencyController extends BaseController {
         Executor executor = ExecutorFactory.buildExecutor(executorIndex);
         // 可不传
         String code = paras.get("code");
+        // 先更新数据
+        KlineController klineController = new KlineController();
+        List<Currency> listAll = Currency.dao.listAll();
+//        listAll = listAll.stream().filter(item -> !item.getCode().startsWith("3")).collect(Collectors.toList());
+        klineController.multiProData(listAll);
         executor.execute(code);
         renderText("ok");
     }

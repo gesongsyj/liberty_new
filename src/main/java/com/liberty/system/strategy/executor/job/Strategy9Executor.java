@@ -13,6 +13,17 @@ import java.util.Vector;
  * 新第一类买点
  */
 public class Strategy9Executor extends StrategyExecutor implements Executor {
+    // 向左偏移多少能够适配另一个策略
+    private int offset = 0;
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     public Strategy9Executor() {
         this.strategy = Strategy.dao.findById(9);
     }
@@ -40,7 +51,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
             }
         }
         sendMailToBuy(stayCurrency, this);
-        System.out.println("策略9执行完毕!");
+        System.out.println("策略[" + this.getStrategy().getDescribe() + "]执行完毕!");
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
         sendMailTimecost(time);
@@ -50,6 +61,9 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
     @Override
     public boolean executeSingle(Currency currency) {
         List<Stroke> strokes = Stroke.dao.listAllByCurrencyId(currency.getId(), ConstantDefine.KLINE_TYPE_K);
+        if (offset != 0) {
+            strokes = strokes.subList(0, strokes.size() - offset);
+        }
         if (strokes.size() < 5) {
             return false;
         }
@@ -74,16 +88,19 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         // 找到三笔重叠,获取重叠区域的最大最小值
         double max = getMax(strokes.get(i - 1).getMax(), strokes.get(i - 2).getMax(), strokes.get(i - 3).getMax());
         double min = getMin(strokes.get(i - 1).getMin(), strokes.get(i - 2).getMin(), strokes.get(i - 3).getMin());
-        // 当前笔的最小值没有突破该重叠区域
-        if (currentStroke.getMin() >= min) {
-            return false;
-        }
         List<Kline> klinesAfterLastStroke = Kline.dao.getListAfterDate(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(strokes.size() - 1).getEndDate());
-        // 时机已过
-        if (klinesAfterLastStroke.size() > 4) {
+        // offset==0表示不是其他策略的前置条件. 最后一笔的k线数量用于判断时机
+        if (offset == 0 && klinesAfterLastStroke.size() > 4) {
             return false;
         }
         while (true) {
+            if (i - 4 < 0) {
+                return false;
+            }
+            // 当前笔的最小值没有突破该重叠区域
+            if (currentStroke.getMin() >= min) {
+                return false;
+            }
             // 用来比较的K线最大值没有突破该区域
             if (strokes.get(i - 4).getMax() <= max) {
                 if (i - 6 < 0) {
@@ -101,14 +118,18 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 }
                 i = i - 2;
             } else {
-                if (i - 4 < 0) {
-                    return false;
-                }
                 double compareMax = strokes.get(i - 4).getMax();
                 double compareMin = strokes.get(i - 4).getMin();
-                // 重叠则中枢扩展,确保有用来比较的一笔i-4,所以是i-6
-                while (i - 6 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 4), strokes.get(i - 3)) == 0) {
+                // 先判断一把,满足就直接返回
+                if (currentMax - currentMin < compareMax - compareMin) {
+                    return true;
+                }
+                // 重叠则中枢扩展
+                if (i - 5 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 4), strokes.get(i - 3)) == 0) {
+                    max = Math.max(strokes.get(i - 5).getMax(), max);
+                    min = Math.min(strokes.get(i - 5).getMin(), min);
                     i = i - 2;
+                    continue;
                 }
                 // 可比较K线的最大值突破该区域,比较该笔与当前笔对应的macd面积[面积不好算,先比较跌幅吧]
                 // 用来对比的可能也不是一笔,得往前找到重叠的才算

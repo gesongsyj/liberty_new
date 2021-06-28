@@ -20,6 +20,7 @@ public class ExecutorFactory {
         executorList.add(new Strategy7Executor());
         executorList.add(new Strategy8Executor());
         executorList.add(new Strategy9Executor());
+        executorList.add(new Strategy10Executor());
     }
 
     public static Executor buildExecutor(int executorIndex) {
