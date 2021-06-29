@@ -81,7 +81,7 @@ public class Strategy3Executor extends StrategyExecutor implements Executor {
         System.out.println("策略3执行完毕!");
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
-        MailKit.send("530256489@qq.com", null, "策略[" + strategy.getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
+        MailKit.send("1971119509@qq.com", null, "策略[" + strategy.getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
         return stayCurrency;
     }
 

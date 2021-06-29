@@ -6,10 +6,7 @@ import com.jfplugin.mail.MailKit;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.MailUtil;
-import com.liberty.system.model.Centre;
-import com.liberty.system.model.Currency;
-import com.liberty.system.model.Strategy;
-import com.liberty.system.model.Stroke;
+import com.liberty.system.model.*;
 import com.liberty.system.strategy.executor.Executor;
 
 import java.util.ArrayList;
@@ -59,7 +56,7 @@ public abstract class StrategyExecutor {
         String tmp = "策略[" + this.getStrategy().getDescribe() + "]此次执行耗时:" + time + "分钟!";
         System.out.println(tmp);
         if (!this.isCalibrate()) {
-            MailKit.send("530256489@qq.com", null, "策略[" + this.getStrategy().getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
+            MailKit.send("1971119509@qq.com", null, "策略[" + this.getStrategy().getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
         }
     }
 
@@ -107,6 +104,25 @@ public abstract class StrategyExecutor {
     }
 
     public abstract boolean executeSingle(Currency currency);
+
+    /**
+     * 删除当天的执行记录
+     *
+     * @param code
+     */
+    public void deleteExecuteRecord(String code) {
+        String sql;
+        if (code == null) {
+            sql = "DELETE from currency_strategy WHERE strategyId=" + this.getStrategy().getId() + " and startDate = '" + DateUtil.getDay() + "'";
+        } else {
+            Currency currency = Currency.dao.findByCode(code);
+            sql = "DELETE from currency_strategy WHERE currencyId = " + currency.getId() + " and strategyId=" + this.getStrategy().getId() + " and startDate = '" + DateUtil.getDay() + "'";
+        }
+        Db.tx(() -> {
+            Db.delete(sql);
+            return true;
+        });
+    }
 
     /**
      * 满足策略,判断记录是否存在,执行不同的操作

@@ -430,7 +430,7 @@ public class KlineController extends BaseController {
 		long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
         if(sendMail){
-            MailKit.send("530256489@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
+            MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
         }
     }
 
@@ -466,7 +466,7 @@ public class KlineController extends BaseController {
 
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
-        MailKit.send("530256489@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
+        MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
     }
 
     /**

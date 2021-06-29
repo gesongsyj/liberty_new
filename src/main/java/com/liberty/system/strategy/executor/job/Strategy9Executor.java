@@ -30,6 +30,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
 
     @Override
     public Vector<Currency> execute(String code) {
+        deleteExecuteRecord(code);
         long start = System.currentTimeMillis();
         Vector<Currency> stayCurrency = new Vector<>();
         if (code == null) {
@@ -98,7 +99,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 return false;
             }
             // 当前笔的最小值没有突破该重叠区域
-            if (currentStroke.getMin() >= min) {
+            if (currentMin >= min) {
                 return false;
             }
             // 用来比较的K线最大值没有突破该区域
@@ -110,13 +111,10 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 if (strokes.get(i - 6).getMax() < min) {
                     return false;
                 }
-                // i-6的最大值在重叠区域最大最小值之间
-                if (strokes.get(i - 6).getMax() >= min && strokes.get(i - 6).getMax() <= max) {
-                    if (strokes.get(i - 5).getMin() < min) {
-                        min = strokes.get(i - 5).getMin();
-                    }
-                }
+                max = Math.max(strokes.get(i - 5).getMax(), max);
+                min = Math.min(strokes.get(i - 5).getMin(), min);
                 i = i - 2;
+                continue;
             } else {
                 double compareMax = strokes.get(i - 4).getMax();
                 double compareMin = strokes.get(i - 4).getMin();

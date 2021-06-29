@@ -343,7 +343,13 @@ public class CurrencyController extends BaseController {
         String code = paras.get("code");
         // 先更新数据
         KlineController klineController = new KlineController();
-        List<Currency> listAll = Currency.dao.listAll();
+        List<Currency> listAll = new ArrayList<>();
+        if (code != null) {
+            Currency currency = Currency.dao.findByCode(code);
+            listAll.add(currency);
+        } else {
+            listAll = Currency.dao.listAll();
+        }
 //        listAll = listAll.stream().filter(item -> !item.getCode().startsWith("3")).collect(Collectors.toList());
         klineController.multiProData(listAll);
         executor.execute(code);

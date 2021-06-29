@@ -57,7 +57,7 @@ public class MailUtil {
                     List<String> cc = new ArrayList<>();
                     // 第二个参数是抄送对象
                     try {
-                        MailKit.send("530256489@qq.com", null, "买入提醒!", sb.toString());
+                        MailKit.send("1971119509@qq.com", null, "买入提醒!", sb.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -91,7 +91,7 @@ public class MailUtil {
             sb.append(s.getDescribe());
             List<String> cc = new ArrayList<>();
             // 第二个参数是抄送对象
-            MailKit.send("530256489@qq.com", null, "买入提醒!", sb.toString());
+            MailKit.send("1971119509@qq.com", null, "买入提醒!", sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,7 +118,7 @@ public class MailUtil {
             sb.append(s.getStrategy().getDescribe());
             List<String> cc = new ArrayList<>();
             // 第二个参数是抄送对象
-            MailKit.send("530256489@qq.com", null, s.getExecuteDate() + "买入提醒!", sb.toString());
+            MailKit.send("1971119509@qq.com", null, s.getExecuteDate() + "买入提醒!", sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,7 +147,7 @@ public class MailUtil {
             sb.append(csId);
             sb.append("&cutLine=null");
             // 第二个参数是抄送对象
-            MailKit.send("530256489@qq.com", null, "止损提醒!", sb.toString());
+            MailKit.send("1971119509@qq.com", null, "止损提醒!", sb.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

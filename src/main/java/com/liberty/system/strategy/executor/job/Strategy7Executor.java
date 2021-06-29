@@ -72,7 +72,7 @@ public class Strategy7Executor extends StrategyExecutor implements Executor {
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
         try {
-            MailKit.send("530256489@qq.com", null, "策略[" + strategy.getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
+            MailKit.send("1971119509@qq.com", null, "策略[" + strategy.getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
         } catch (Exception e) {
             System.out.println("邮件发送失败!");
             e.printStackTrace();

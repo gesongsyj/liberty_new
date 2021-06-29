@@ -36,6 +36,7 @@
 		#(flag==0?"where":"and") cs.strategyId=#para(qo.strategyId)
 		#set(flag=1)
 	#end
+	order by cs.startDate desc
 #end
 
 #sql("findByCode")

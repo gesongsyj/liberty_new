@@ -14,7 +14,7 @@ public class RoutineController6 extends BaseController implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		MailKit.send("530256489@qq.com", null, "IMPORTANT!", "Stop working!");
+		MailKit.send("1971119509@qq.com", null, "IMPORTANT!", "Stop working!");
 	}
 
 }
