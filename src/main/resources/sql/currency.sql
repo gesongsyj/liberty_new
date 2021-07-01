@@ -17,7 +17,7 @@
 
 #sql("paginateToBuy")
 	select c.*,cs.id as csId,DATE_FORMAT(cs.startDate,'%Y-%m-%d') as startDate,s.`describe` as `describe`,cs.cutLine as cutLine
-	from currency c RIGHT JOIN currency_strategy cs
+	from currency c JOIN currency_strategy cs
 	on cs.currencyId=c.id join strategy s on cs.strategyId=s.id
 	#set(flag=0)
 	#if(qo.keyword)

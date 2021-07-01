@@ -122,6 +122,14 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 if (currentMax - currentMin < compareMax - compareMin) {
                     return true;
                 }
+                // 如果比较笔突破中枢的力度超过中枢高度的一半,必须比较
+                if (compareMax - max > (max - min) * 0.5) {
+                    if (currentMax - currentMin < compareMax - compareMin) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
                 // 重叠则中枢扩展
                 if (i - 5 >= 0 && Stroke.dao.overlap(strokes.get(i - 5), strokes.get(i - 4), strokes.get(i - 3)) == 0) {
                     max = Math.max(strokes.get(i - 5).getMax(), max);

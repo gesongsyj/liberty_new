@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50726
 File Encoding         : 65001
 
-Date: 2021-06-24 20:03:34
+Date: 2021-06-30 17:48:36
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -59,7 +59,7 @@ CREATE TABLE `currency` (
   `calibrated` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否验证过策略,跑全量验证时避免重复跑,1:是;0:否',
   PRIMARY KEY (`id`),
   KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=14051 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14057 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for currency_strategy
@@ -73,7 +73,7 @@ CREATE TABLE `currency_strategy` (
   `cutLine` double(20,6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cId_sId_date` (`currencyId`,`strategyId`,`startDate`)
-) ENGINE=InnoDB AUTO_INCREMENT=209065 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1068940 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for dictionary
@@ -113,8 +113,8 @@ CREATE TABLE `kline` (
   `turnoverRate` double(255,6) DEFAULT NULL COMMENT '换手率',
   `bosp` varchar(255) DEFAULT NULL COMMENT '买卖点;0:买,1:卖',
   PRIMARY KEY (`id`),
-  KEY `currencyId_type_date` (`currencyId`,`type`,`date`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=66522677 DEFAULT CHARSET=utf8mb4;
+  KEY `currencyId` (`currencyId`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=142942117 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for line
@@ -133,9 +133,8 @@ CREATE TABLE `line` (
   `type` char(1) DEFAULT NULL,
   `direction` char(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `currencyId_startDate` (`currencyId`,`startDate`),
-  KEY `currencyId_endDate` (`currencyId`,`endDate`)
-) ENGINE=InnoDB AUTO_INCREMENT=123043 DEFAULT CHARSET=utf8mb4;
+  KEY `currencyId` (`currencyId`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for shape
@@ -159,7 +158,7 @@ CREATE TABLE `strategy` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `describe` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for stroke
@@ -178,6 +177,5 @@ CREATE TABLE `stroke` (
   `type` char(1) DEFAULT NULL,
   `direction` char(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `currencyId_startDate` (`currencyId`,`startDate`),
-  KEY `currencyId_endDate` (`currencyId`,`endDate`)
-) ENGINE=InnoDB AUTO_INCREMENT=10971493 DEFAULT CHARSET=utf8mb4;
+  KEY `currencyId` (`currencyId`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=48093061 DEFAULT CHARSET=utf8mb4;
