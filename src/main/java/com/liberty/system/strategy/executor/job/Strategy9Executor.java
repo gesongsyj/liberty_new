@@ -90,8 +90,8 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         double max = getMax(strokes.get(i - 1).getMax(), strokes.get(i - 2).getMax(), strokes.get(i - 3).getMax());
         double min = getMin(strokes.get(i - 1).getMin(), strokes.get(i - 2).getMin(), strokes.get(i - 3).getMin());
         List<Kline> klinesAfterLastStroke = Kline.dao.getListAfterDate(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(strokes.size() - 1).getEndDate());
-        // offset==0表示不是其他策略的前置条件. 最后一笔的k线数量用于判断时机
-        if (offset == 0 && klinesAfterLastStroke.size() > 4) {
+        // offset==0表示不是其他策略的前置条件. 判断时机
+        if (offset == 0 && checkPoint(klinesAfterLastStroke, strokes.get(strokes.size() - 1))) {
             return false;
         }
         while (true) {
@@ -150,6 +150,36 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 return false;
             }
         }
+    }
+
+    /**
+     * 找到条件堪堪成立的那天
+     *
+     * @param klinesAfterLastStroke
+     * @param lastStroke
+     * @return
+     */
+    public boolean checkPoint(List<Kline> klinesAfterLastStroke, Stroke lastStroke) {
+        if (klinesAfterLastStroke.size() < 2) {
+            return false;
+        }
+        double max = klinesAfterLastStroke.get(0).getMax();
+        double min = klinesAfterLastStroke.get(0).getMin();
+        if (lastStroke.getDirection().equals(ConstantDefine.DIRECTION_UP)) {
+            return false;
+        }
+        for (int i = 1; i < klinesAfterLastStroke.size(); i++) {
+            // 判断包含
+            if (klinesAfterLastStroke.get(i).getMax() <= max && klinesAfterLastStroke.get(i).getMin() >= min) {
+                // 向下,包含取下下
+                max = klinesAfterLastStroke.get(i).getMax();
+                continue;
+            }
+            if (klinesAfterLastStroke.get(i).getMax() > max && i == klinesAfterLastStroke.size() - 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public double getMax(double d1, double d2, double d3) {
