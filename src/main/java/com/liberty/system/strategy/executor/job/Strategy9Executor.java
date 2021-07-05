@@ -91,7 +91,7 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         double min = getMin(strokes.get(i - 1).getMin(), strokes.get(i - 2).getMin(), strokes.get(i - 3).getMin());
         List<Kline> klinesAfterLastStroke = Kline.dao.getListAfterDate(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(strokes.size() - 1).getEndDate());
         // offset==0表示不是其他策略的前置条件. 判断时机
-        if (offset == 0 && checkPoint(klinesAfterLastStroke, strokes.get(strokes.size() - 1))) {
+        if (offset == 0 && !checkPoint(klinesAfterLastStroke, strokes.get(strokes.size() - 1))) {
             return false;
         }
         while (true) {
@@ -175,8 +175,12 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
                 max = klinesAfterLastStroke.get(i).getMax();
                 continue;
             }
-            if (klinesAfterLastStroke.get(i).getMax() > max && i == klinesAfterLastStroke.size() - 1) {
-                return true;
+            if (klinesAfterLastStroke.get(i).getMax() > max) {
+                if (i == klinesAfterLastStroke.size() - 1) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         return false;
