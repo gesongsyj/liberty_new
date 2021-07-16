@@ -212,7 +212,7 @@ public class CurrencyController extends BaseController {
         KlineController klineController = new KlineController();
         klineController.downloadData(c.getCode());
         klineController.createStroke(c.getCode());
-//		klineController.createLine(c.getCode());
+		klineController.createLine(c.getCode());
 //		redirect("/currency/list");
         list();
     }

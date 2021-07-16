@@ -78,7 +78,7 @@ public class Calibrator {
                 klineController.createStroke(currency.getCode());
                 return true;
             });
-//              klineController.createLine(currency.getCode());
+              klineController.createLine(currency.getCode());
             executor.setExecuteDate(DateUtil.getDay(klines.get(i).getDate()));
             Vector<Currency> result = executor.execute(currency.getCode());
             if (!result.isEmpty()) {
