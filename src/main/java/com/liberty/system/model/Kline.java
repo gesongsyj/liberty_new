@@ -56,6 +56,12 @@ public class Kline extends BaseKline<Kline> {
         return list;
     }
 
+    public List<Kline> getLastSomeByCurrencyId(int currencyId, String type, int limit) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("limit",limit));
+        List<Kline> klines = dao.find(sqlPara);
+        return klines;
+    }
+
 //    @Before(Tx.class)
     public void saveMany(Map<String, List<Kline>> klineMap, Map<String, Kline> lastKlineMap) {
         MACD macd = new MACD();// 计算macd红绿柱的值

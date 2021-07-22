@@ -152,40 +152,6 @@ public class Strategy9Executor extends StrategyExecutor implements Executor {
         }
     }
 
-    /**
-     * 找到条件堪堪成立的那天
-     *
-     * @param klinesAfterLastStroke
-     * @param lastStroke
-     * @return
-     */
-    public boolean checkPoint(List<Kline> klinesAfterLastStroke, Stroke lastStroke) {
-        if (klinesAfterLastStroke.size() < 2) {
-            return false;
-        }
-        double max = klinesAfterLastStroke.get(0).getMax();
-        double min = klinesAfterLastStroke.get(0).getMin();
-        if (lastStroke.getDirection().equals(ConstantDefine.DIRECTION_UP)) {
-            return false;
-        }
-        for (int i = 1; i < klinesAfterLastStroke.size(); i++) {
-            // 判断包含
-            if (klinesAfterLastStroke.get(i).getMax() <= max && klinesAfterLastStroke.get(i).getMin() >= min) {
-                // 向下,包含取下下
-                max = klinesAfterLastStroke.get(i).getMax();
-                continue;
-            }
-            if (klinesAfterLastStroke.get(i).getMax() > max) {
-                if (i == klinesAfterLastStroke.size() - 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-
     public double getMax(double d1, double d2, double d3) {
         double max = d1;
         if (d2 > max) {

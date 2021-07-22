@@ -3,6 +3,7 @@ package com.liberty.system.strategy.executor.job;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfplugin.mail.MailKit;
+import com.liberty.common.constant.ConstantDefine;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.MailUtil;
@@ -335,5 +336,39 @@ public abstract class StrategyExecutor {
             }
             beforeCentre.setStartDate(strokes.get(0).getStartDate()).setMax(strokes.get(0).getMax());
         }
+    }
+
+    /**
+     * 找到条件堪堪成立的那天
+     *
+     * @param klinesAfterLastStroke
+     * @param lastStroke
+     * @return
+     */
+    public boolean checkPoint(List<Kline> klinesAfterLastStroke, Stroke lastStroke) {
+        if (klinesAfterLastStroke.size() < 2) {
+            return false;
+        }
+        double max = klinesAfterLastStroke.get(0).getMax();
+        double min = klinesAfterLastStroke.get(0).getMin();
+        if (lastStroke.getDirection().equals(ConstantDefine.DIRECTION_UP)) {
+            return false;
+        }
+        for (int i = 1; i < klinesAfterLastStroke.size(); i++) {
+            // 判断包含
+            if (klinesAfterLastStroke.get(i).getMax() <= max && klinesAfterLastStroke.get(i).getMin() >= min) {
+                // 向下,包含取下下
+                max = klinesAfterLastStroke.get(i).getMax();
+                continue;
+            }
+            if (klinesAfterLastStroke.get(i).getMax() > max) {
+                if (i == klinesAfterLastStroke.size() - 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }
