@@ -21,6 +21,7 @@ public abstract class StrategyExecutor {
     protected ThreadLocal<String> localExecuteDate = new ThreadLocal<>();
     protected Strategy strategy;
     protected boolean isCalibrate = false;
+    protected boolean onlyK = false;
 
     public boolean isCalibrate() {
         return isCalibrate;
@@ -44,6 +45,14 @@ public abstract class StrategyExecutor {
 
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
+    }
+
+    public boolean isOnlyK() {
+        return onlyK;
+    }
+
+    public void setOnlyK(boolean onlyK) {
+        this.onlyK = onlyK;
     }
 
     public void sendMailToBuy(Vector<Currency> stayCurrency, Executor executor) {

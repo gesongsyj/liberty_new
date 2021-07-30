@@ -271,7 +271,7 @@ public class KlineController extends BaseController {
             klineMap.clear();
             lastKlineMap.clear();
         }
-        renderText("ok");
+//        renderText("ok");
     }
 
     /**

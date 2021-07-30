@@ -66,21 +66,21 @@ public class BoxBreakStrategyAgent extends StrategyAgent {
             }
             if(klines.get(i).getDate().compareTo(dividedStrokes.get(j).getStartDate())==0){
                 if(Stroke.STROKE_TYPE_UP.equals(dividedStrokes.get(j).getDirection())){
-                    minxList.add(1.0*(i+1));
+                    minxList.add(1.0*i);
                     minList.add(klines.get(i).getMin());
                 }
                 if(Stroke.STROKE_TYPE_DOWN.equals(dividedStrokes.get(j).getDirection())){
-                    maxxList.add(1.0*(i+1));
+                    maxxList.add(1.0*i);
                     maxList.add(klines.get(i).getMax());
                 }
             }
             if(klines.get(i).getDate().compareTo(dividedStrokes.get(j).getEndDate())==0){
                 if(Stroke.STROKE_TYPE_UP.equals(dividedStrokes.get(j).getDirection())){
-                    maxxList.add(1.0*(i+1));
+                    maxxList.add(1.0*i);
                     maxList.add(klines.get(i).getMax());
                 }
                 if(Stroke.STROKE_TYPE_DOWN.equals(dividedStrokes.get(j).getDirection())){
-                    minxList.add(1.0*(i+1));
+                    minxList.add(1.0*i);
                     minList.add(klines.get(i).getMin());
                 }
                 j = j+2;
@@ -163,7 +163,7 @@ public class BoxBreakStrategyAgent extends StrategyAgent {
         List<Double> minList = new ArrayList<>();
         List<Double> xList = new ArrayList<>();
         for (int i = 0; i < strokes.size(); i = i + 2) {
-            xList.add(1.0*(i+1));
+            xList.add(1.0*i);
             maxList.add(strokes.get(i).getMax());
             minList.add(strokes.get(i).getMin());
         }

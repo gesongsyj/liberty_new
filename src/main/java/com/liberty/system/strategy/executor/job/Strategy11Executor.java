@@ -94,7 +94,7 @@ public class Strategy11Executor extends StrategyExecutor implements Executor {
                 return false;
             }
         }
-        if (fittingResult.getFitLevel() < 0.5 || fittingResult.getLoopIndex() < 2) {
+        if (fittingResult.getFitLevel() < 0.5 || fittingResult.getLoopIndex() < 1) {
             return false;
         }
         if (klines.get(index).getMin() > klines.get(klines.size() - 1).getMin()) {
@@ -105,7 +105,6 @@ public class Strategy11Executor extends StrategyExecutor implements Executor {
         }
         List<Kline> after = klines.subList(index, klines.size());
         List<Kline> before = klines.subList(index - 7, index);
-
 
 //        List<Stroke> strokes = Stroke.dao.listAllByCurrencyId(currency.getId(), ConstantDefine.KLINE_TYPE_K);
 //        if (strokes.size() < 4) {
@@ -145,7 +144,14 @@ public class Strategy11Executor extends StrategyExecutor implements Executor {
 //        }
 //        List<Kline> after = Kline.dao.getByDateRange(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(index).getStartDate(), strokes.get(strokes.size() - 1).getEndDate());
 //        List<Kline> before = Kline.dao.listBeforeDate(currency.getId(), ConstantDefine.KLINE_TYPE_K, strokes.get(index).getStartDate(), 7);
-        if (getVolumeAvg(after) >= getVolumeAvg(before) * 2) {
+        double afterMax = 0;
+        for (int i = 0; i < after.size() - 7; i++) {
+            double volumeAvg = getVolumeAvg(after.subList(i, i + 7));
+            if (volumeAvg > afterMax) {
+                afterMax = volumeAvg;
+            }
+        }
+        if (afterMax >= getVolumeAvg(before) * 2) {
             return true;
         }
         return false;

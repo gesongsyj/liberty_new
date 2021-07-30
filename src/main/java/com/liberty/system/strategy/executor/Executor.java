@@ -20,4 +20,8 @@ public interface Executor {
 	boolean isCalibrate();
 
 	void setCalibrate(boolean value);
+
+	boolean isOnlyK();
+
+	void setOnlyK(boolean onlyK);
 }
