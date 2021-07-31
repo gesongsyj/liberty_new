@@ -85,7 +85,11 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
         for (int i = preIndex; i >= dayCount - 1; i--) {
             ma20 = MaUtil.calculateMAPoint(klines.subList(i + 1 - dayCount, i + 1), dayCount);
             if ((klines.get(i).getMax() + klines.get(i).getMin()) / 2 <= ma20) {
-                index = i;
+                if(klines.get(i+1).getMin()<ma20){
+                    index = i+1;
+                }else{
+                    index = i;
+                }
                 break;
             }
             klines.get(i).put("ma20", ma20);
@@ -94,14 +98,17 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
         if (index + 1 < compareNum + dayCount) {
             return false;
         }
+        if (klines.size() - index < compareNum * 2-2) {
+            return false;
+        }
         // 往前要连续5个k在M20以下
         int maxUnderNum = 0;
-        for (int i = index; i >= index - compareNum; i--) {
+        for (int i = index; i > index - compareNum; i--) {
             Double maPoint = MaUtil.calculateMAPoint(klines.subList(i - dayCount, i), dayCount);
             if (klines.get(i).getMin() > maPoint) {
                 return false;
             }
-            if (klines.get(i).getMax() <= maPoint) {
+            if (klines.get(i).getMax() <= maPoint*(1+0.01)) {
                 maxUnderNum++;
             }
         }
@@ -117,11 +124,13 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
         // 最小二乘法计算alpha和beta值
         LsmParam lsmParam = MathUtil.lsmCal(ma20List);
         // 判断拟合度和斜率是否满足要求
+//        boolean lineFit = MathUtil.lineFittingCheck_new(ma20List, lsmParam, 0.0014, 0.993);
         boolean lineFit = MathUtil.lineFittingCheck(ma20List, lsmParam, 0.0014, 0.012);
         if (!lineFit) {
             return false;
         }
-        boolean ret = MathUtil.doubleKlineFittingCheck(subList, 0.4);
+//        boolean ret = MathUtil.doubleKlineFittingCheck_new(subList, 0.99);
+        boolean ret = MathUtil.doubleKlineFittingCheck(subList, 0.015);
         return ret;
     }
 

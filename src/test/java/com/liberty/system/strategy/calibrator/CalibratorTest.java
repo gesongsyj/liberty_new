@@ -36,8 +36,8 @@ public class CalibratorTest {
         arp.setShowSql(true);
         arp.setContainerFactory(new OrderedFieldContainerFactory());// 字段有序，保持和查询的顺序一致
         // 设置sql存放的根路径
-        String a= PathKit.getRootClassPath();
-        String b= PathKit.getWebRootPath()+"/target/classes";
+        String a = PathKit.getRootClassPath();
+        String b = PathKit.getWebRootPath() + "/target/classes";
         arp.setBaseSqlTemplatePath(b + "/sql");
         arp.addSqlTemplate("all.sql");
         // DB映射
@@ -50,6 +50,7 @@ public class CalibratorTest {
         arp.start();
 
         Executor executor = ExecutorFactory.buildExecutor(12);
+        executor.setCalibrate(true);
         executor.setOnlyK(true);
         calibrator = new Calibrator(executor);
     }
@@ -66,9 +67,21 @@ public class CalibratorTest {
         // false
 //        Currency currency = Currency.dao.findByCode("600990");
 //        Date startDate = DateUtil.strDate("2018-09-27", "yyyy-MM-dd");
+        // false
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2018-04-27", "yyyy-MM-dd");
+        // false
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2015-08-13", "yyyy-MM-dd");
+        // false but true
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2019-07-10", "yyyy-MM-dd");
+        // true
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2014-06-19", "yyyy-MM-dd");
         Currency currency = Currency.dao.findByCode("600990");
-        Date startDate = DateUtil.strDate("2018-04-27", "yyyy-MM-dd");
-        calibrator.calibrate(currency,startDate);
+        Date startDate = DateUtil.strDate("2020-07-16", "yyyy-MM-dd");
+        calibrator.calibrate(currency, startDate);
         System.out.println(111);
     }
 }

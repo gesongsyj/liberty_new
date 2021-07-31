@@ -6,7 +6,7 @@ package com.liberty.system.bean.common;
 public class LsmParam {
     // α参数值
     private double alpha;
-    // β参数值
+    // β参数值,斜率
     private double beta;
 
     public double getAlpha() {

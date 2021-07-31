@@ -91,7 +91,7 @@ public class Calibrator {
             }
             System.out.println("验证进度============:" + i + "/" + (klines.size() - 1));
             // 调试,只验证一个日期
-            break;
+//            break;
         }
         System.out.println("结果数量:" + retDate.size());
         for (Date date : retDate) {
