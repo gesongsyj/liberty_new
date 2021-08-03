@@ -66,7 +66,9 @@ public abstract class StrategyExecutor {
         String tmp = "策略[" + this.getStrategy().getDescribe() + "]此次执行耗时:" + time + "分钟!";
         System.out.println(tmp);
         if (!this.isCalibrate()) {
-            MailKit.send("1971119509@qq.com", null, "策略[" + this.getStrategy().getDescribe() + "]执行耗时提醒!", "此次策略执行耗时:" + time + "分钟!");
+            MailKit.send("1971119509@qq.com", null, "策略[" + this.getStrategy().getDescribe() +
+                            "]执行耗时提醒!",
+                    "此次策略执行耗时:" + time + "分钟!");
         }
     }
 
@@ -91,7 +93,10 @@ public abstract class StrategyExecutor {
                             }
                         }
 //					else {
-//						Record record = Db.findFirst("select * from currency_strategy where cutLine is null and currencyId=? and strategyId=?",
+//						Record record = Db.findFirst("select * from currency_strategy where
+//						cutLine is null
+//						and
+//						currencyId=? and strategyId=?",
 //								currency.getId(), strategy.getId());
 //						if(record!=null) {
 //							Db.delete("currency_strategy",record);
@@ -100,7 +105,8 @@ public abstract class StrategyExecutor {
                     }
                 });
                 futureList.add(future);
-                System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
+                System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";" +
+                        "\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
             }
             for (Future future : futureList) {
                 try {
@@ -123,10 +129,14 @@ public abstract class StrategyExecutor {
     public void deleteExecuteRecord(String code) {
         String sql;
         if (code == null) {
-            sql = "DELETE from currency_strategy WHERE strategyId=" + this.getStrategy().getId() + " and startDate = '" + DateUtil.getDay() + "'";
+            sql = "DELETE from currency_strategy WHERE strategyId=" + this.getStrategy().getId() + " and " +
+                    "startDate = " +
+                    "'" + DateUtil.getDay() + "'";
         } else {
             Currency currency = Currency.dao.findByCode(code);
-            sql = "DELETE from currency_strategy WHERE currencyId = " + currency.getId() + " and strategyId=" + this.getStrategy().getId() + " and startDate = '" + DateUtil.getDay() + "'";
+            sql = "DELETE from currency_strategy WHERE currencyId = " + currency.getId() + " and " +
+                    "strategyId" +
+                    "=" + this.getStrategy().getId() + " and startDate = '" + DateUtil.getDay() + "'";
         }
         Db.tx(() -> {
             Db.delete(sql);
@@ -142,10 +152,14 @@ public abstract class StrategyExecutor {
      * @return
      */
     public boolean notExistsRecord(Currency currency) {
-        Record record = Db.findFirst("select * from currency_strategy where currencyId=? and strategyId=? and startDate=?",
+        Record record = Db.findFirst("select * from currency_strategy where currencyId=? and " +
+                        "strategyId=? " +
+                        "and " +
+                        "startDate=?",
                 currency.getId(), this.strategy.getId(), this.getExecuteDate());
         if (record == null) {
-            record = new Record().set("currencyId", currency.getId()).set("strategyId", this.strategy.getId())
+            record = new Record().set("currencyId", currency.getId()).set("strategyId",
+                    this.strategy.getId())
                     .set("startDate", this.getExecuteDate());
             Db.save("currency_strategy", record);
             return true;
@@ -237,7 +251,8 @@ public abstract class StrategyExecutor {
      * @param strokes
      * @return
      */
-    public void buildCentre(List<Stroke> strokes, Centre centre, Stroke beforeCentre, Stroke afterCentre) {
+    public void buildCentre(List<Stroke> strokes, Centre centre, Stroke beforeCentre,
+                            Stroke afterCentre) {
         double max, min, centreMax, centreMin;
         Stroke lastStroke = strokes.get(strokes.size() - 1);
         // 最后一笔必须向下
@@ -279,7 +294,8 @@ public abstract class StrategyExecutor {
             }
 
             if (i >= 5) {
-                for (int j = i - 5; j >= 0; j--) {// i-4作为连接线存在,不参与重构中枢,其实没有任何影响,因为i+3的最大值和最小值都可以从前后两笔中取得
+                for (int j = i - 5; j >= 0; j--) {// i-4作为连接线存在,不参与重构中枢,其实没有任何影响,
+                    // 因为i+3的最大值和最小值都可以从前后两笔中取得
 //					"0".equals(strokes.get(j).getDirection())必然
                     if (strokes.get(j).getMax() <= centre.getCentreMax()) {
                         if (strokes.get(j).getMin() >= centre.getCentreMin()) {
@@ -377,6 +393,45 @@ public abstract class StrategyExecutor {
                     return false;
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * 判断当前构成底分型
+     *
+     * @param klines 时间正序排列的集合
+     * @return 判断结果
+     */
+    public boolean checkLowShape(List<Kline> klines) {
+        int currentIndex = klines.size() - 1;
+        if (currentIndex < 2) {
+            return false;
+        }
+        if (klines.get(currentIndex).getMax() <= klines.get(currentIndex - 1).getMax()) {
+            return false;
+        }
+        if (klines.get(currentIndex).getMax() >= klines.get(currentIndex - 1).getMax() &&
+                klines.get(currentIndex).getMin() <= klines.get(currentIndex - 1).getMin()) {
+            List<Kline> subKlines = new ArrayList<>(klines.subList(0, currentIndex));
+            subKlines.get(subKlines.size() - 1).setMax(klines.get(currentIndex).getMax());
+            return checkLowShape(subKlines);
+        }
+        if (klines.get(currentIndex).getMax() > klines.get(currentIndex - 1).getMax() &&
+                klines.get(currentIndex).getMin() > klines.get(currentIndex - 1).getMin()) {
+            if (klines.get(currentIndex - 1).getMax() > klines.get(currentIndex - 2).getMax() &&
+                    klines.get(currentIndex - 1).getMin() > klines.get(currentIndex - 2).getMin()) {
+                return false;
+            }
+            if (klines.get(currentIndex - 1).getMax() > klines.get(currentIndex - 2).getMax() &&
+                    klines.get(currentIndex - 1).getMin() < klines.get(currentIndex - 2).getMin()) {
+                List<Kline> subKlines = new ArrayList<>(klines);
+                // 这里设置min,上面设置max,都是为了更好的得到true
+                subKlines.get(subKlines.size() - 3).setMin(subKlines.get(subKlines.size() - 2).getMin());
+                subKlines.remove(subKlines.size() - 2);
+                return checkLowShape(subKlines);
+            }
+            return true;
         }
         return false;
     }
