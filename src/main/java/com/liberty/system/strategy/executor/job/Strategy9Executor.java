@@ -1,7 +1,6 @@
 package com.liberty.system.strategy.executor.job;
 
 import com.liberty.common.constant.ConstantDefine;
-import com.liberty.common.utils.MailUtil;
 import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.*;
 import com.liberty.system.strategy.executor.Executor;

@@ -91,6 +91,12 @@ public class Kline extends BaseKline<Kline> {
         return list;
     }
 
+    public List<Kline> listByCurrencyId(int currencyId, String type,int limit) {
+        SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("limit",limit));
+        List<Kline> list = dao.find(sqlPara);
+        return list;
+    }
+
     public List<Kline> listAllByCurrencyIdBeforeDate(int currencyId, String type, Date date) {
         SqlPara sqlPara = getSqlParaFromTemplate(Kv.by("currencyId", currencyId).set("type", type).set("date", date));
         List<Kline> list = dao.find(sqlPara);

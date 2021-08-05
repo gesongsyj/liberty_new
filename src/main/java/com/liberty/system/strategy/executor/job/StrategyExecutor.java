@@ -7,9 +7,13 @@ import com.liberty.common.constant.ConstantDefine;
 import com.liberty.common.plugins.threadPoolPlugin.ThreadPoolKit;
 import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.MailUtil;
+import com.liberty.system.dingtalk.DingUtil;
 import com.liberty.system.model.*;
 import com.liberty.system.strategy.executor.Executor;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -69,6 +73,38 @@ public abstract class StrategyExecutor {
             MailKit.send("1971119509@qq.com", null, "策略[" + this.getStrategy().getDescribe() +
                             "]执行耗时提醒!",
                     "此次策略执行耗时:" + time + "分钟!");
+        }
+    }
+
+    public void sendDingtalkToBuy(Vector<Currency> stayCurrency, Executor executor) {
+        System.out.println("sendMailToBuy:" + stayCurrency.size());
+        if (stayCurrency.size() != 0 && !this.isCalibrate()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < stayCurrency.size(); i++) {
+                sb.append(stayCurrency.get(i).getCode()).append(":").append(stayCurrency.get(i).getName());
+                if (i != stayCurrency.size() - 1) {
+                    sb.append(",");
+                }
+                sb.append("\n");
+            }
+            sb.append("以上").append(stayCurrency.size()).append("支股票满足策略:");
+            sb.append(executor.getStrategy().getDescribe());
+            try {
+                DingUtil.sendMsg(sb.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("钉钉消息发送失败！");
+            }
+        }
+    }
+
+    public void sendDingtalkTimecost(double time) {
+        String msg = "策略[" + this.getStrategy().getDescribe() + "]此次执行耗时:" + time + "分钟!";
+        try {
+            DingUtil.sendMsg(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("钉钉消息发送失败！");
         }
     }
 

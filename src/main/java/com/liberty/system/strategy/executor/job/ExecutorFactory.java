@@ -1,5 +1,6 @@
 package com.liberty.system.strategy.executor.job;
 
+import com.liberty.common.utils.DateUtil;
 import com.liberty.system.strategy.executor.Executor;
 
 import java.util.ArrayList;
@@ -26,6 +27,18 @@ public class ExecutorFactory {
     }
 
     public static Executor buildExecutor(int executorIndex) {
-        return executorList.get(executorIndex - 1);
+        return buildExecutor(executorIndex, true, false, DateUtil.getDay());
+    }
+
+    public static Executor buildExecutor(int executorIndex, boolean isCalibrate, boolean isOnlyK) {
+        return buildExecutor(executorIndex, isCalibrate, isOnlyK, DateUtil.getDay());
+    }
+
+    public static Executor buildExecutor(int executorIndex, boolean isCalibrate, boolean isOnlyK, String executeDate) {
+        Executor executor = executorList.get(executorIndex - 1);
+        executor.setCalibrate(isCalibrate);
+        executor.setOnlyK(isOnlyK);
+        executor.setExecuteDate(executeDate);
+        return executor;
     }
 }
