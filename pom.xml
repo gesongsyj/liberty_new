@@ -56,7 +56,8 @@
                         <encoding>UTF-8</encoding>
                         <compilerArguments>
                             <verbose/>
-                            <bootclasspath>${java.home}\lib\rt.jar;${java.home}\lib\jce.jar</bootclasspath>
+                            <bootclasspath>${java.home}\lib\rt.jar;${java.home}\lib\jce.jar
+                            </bootclasspath>
                         </compilerArguments>
                     </configuration>
                 </plugin>
@@ -76,7 +77,11 @@
             <artifactId>jfinal-undertow</artifactId>
             <version>1.9</version>
         </dependency>-->
-        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+        <dependency>
+            <groupId>cn.edu.hfut.dmic.webcollector</groupId>
+            <artifactId>WebCollector</artifactId>
+            <version>2.71</version>
+        </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
