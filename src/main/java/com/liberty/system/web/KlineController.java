@@ -130,22 +130,22 @@ public class KlineController extends BaseController {
             klines.add(klineData);
 
             List<Object> point = new ArrayList<>();
-            Map<String,Object> bospMap = new HashMap<>();
-            Map<String,Object> style = new HashMap<>();
-            Map<String,Object> normal = new HashMap<>();
-            if(Kline.BUY_POINT.equals(kline.getBosp())){
+            Map<String, Object> bospMap = new HashMap<>();
+            Map<String, Object> style = new HashMap<>();
+            Map<String, Object> normal = new HashMap<>();
+            if (Kline.BUY_POINT.equals(kline.getBosp())) {
                 point.add(kline.getDate());
                 point.add(kline.getMin());
-                bospMap.put("coord",point);
+                bospMap.put("coord", point);
                 bospList.add(bospMap);
             }
-            if(Kline.SALE_POINT.equals(kline.getBosp())){
+            if (Kline.SALE_POINT.equals(kline.getBosp())) {
                 point.add(kline.getDate());
                 point.add(kline.getMax());
-                normal.put("color","rgb(41,60,85)");
-                style.put("normal",normal);
-                bospMap.put("coord",point);
-                bospMap.put("itemStyle",style);
+                normal.put("color", "rgb(41,60,85)");
+                style.put("normal", normal);
+                bospMap.put("coord", point);
+                bospMap.put("itemStyle", style);
                 bospList.add(bospMap);
             }
 
@@ -224,7 +224,7 @@ public class KlineController extends BaseController {
         resultMap.put("strokes", strokes);
         resultMap.put("lines", lines);
         resultMap.put("lineStrokes", lineStrokes);
-        resultMap.put("bospList",bospList);
+        resultMap.put("bospList", bospList);
         renderJson(new ResultMsg(ResultStatusCode.OK, resultMap));
     }
 
@@ -309,7 +309,7 @@ public class KlineController extends BaseController {
         renderText("ok");
     }
 
-//    @Before(Tx.class)
+    //    @Before(Tx.class)
     public void createStroke_bak(String includeCurrencyCode) {
         Currency currency = Currency.dao.findByCode(includeCurrencyCode);
         String sql = "select * from dictionary where type='klineType_gp'";
@@ -392,18 +392,18 @@ public class KlineController extends BaseController {
      * 多线程下载 处理数据
      */
     public void multiProData(List<Currency> cs) {
-        multiProData(cs,true);
+        multiProData(cs, false);
     }
 
     /**
      * 多线程下载 处理数据
      */
-    public void multiProData(List<Currency> cs,boolean sendMail) {
+    public void multiProData(List<Currency> cs, boolean onlyK) {
         long start = System.currentTimeMillis();
         ThreadPoolExecutor executor = ThreadPoolKit.getExecutor();
         int queueSize = executor.getQueue().remainingCapacity();
-		List<Future> futureList = new ArrayList<>();
-		for (int i = 0; i < cs.size(); i++) {
+        List<Future> futureList = new ArrayList<>();
+        for (int i = 0; i < cs.size(); i++) {
             for (int j = 0; j < queueSize && i < cs.size(); j++, i++) {
                 int index = i;
                 Future<?> future = executor.submit(new Runnable() {
@@ -411,27 +411,27 @@ public class KlineController extends BaseController {
                     public void run() {
                         Currency currency = cs.get(index);
                         downloadData(currency.getCode());
-                        createStroke(currency.getCode());
-                        createLine(currency.getCode());
+                        if(!onlyK){
+                            createStroke(currency.getCode());
+                            createLine(currency.getCode());
+                        }
                     }
                 });
                 futureList.add(future);
-				System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
+                System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
             }
             i--;
-		}
-		for (Future future : futureList) {
-			try {
-				future.get();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		long end = System.currentTimeMillis();
-        double time = (end - start) * 1.0 / 1000 / 60;
-        if(sendMail){
-            MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
         }
+        for (Future future : futureList) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        long end = System.currentTimeMillis();
+        double time = (end - start) * 1.0 / 1000 / 60;
+        MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
     }
 
     /**
@@ -454,7 +454,7 @@ public class KlineController extends BaseController {
                 }
             });
             futureList.add(future);
-			System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
+            System.out.println("当前线程池信息: \n" + "存活线程数===" + executor.getActiveCount() + ";\n完成任务数===" + executor.getCompletedTaskCount() + ";\n总任务数===" + executor.getTaskCount());
         }
         for (Future future : futureList) {
             try {
@@ -472,7 +472,7 @@ public class KlineController extends BaseController {
     /**
      * 处理跟踪标记,包括移除和跟踪
      */
-    public void handleFollowed(){
+    public void handleFollowed() {
         removeFollowed();
         followLimitUp();
     }
@@ -480,13 +480,13 @@ public class KlineController extends BaseController {
     /**
      * 给涨停股添加标记
      */
-    public void followLimitUp(){
+    public void followLimitUp() {
         List<Currency> cs = Currency.dao.listAll();
-        if(null != cs){
+        if (null != cs) {
             for (Currency c : cs) {
                 Kline last1 = Kline.dao.getLastOneByCurrencyId(c.getId(), Kline.KLINE_TYPE_K);
-                if(null != last1 && null != last1.getAoi()){
-                    if(last1.getAoi()>LIMIT_UP){
+                if (null != last1 && null != last1.getAoi()) {
+                    if (last1.getAoi() > LIMIT_UP) {
                         c.setFollowed(true);
                         c.setFollowedDate(last1.getDate());
                         c.update();
@@ -499,14 +499,14 @@ public class KlineController extends BaseController {
     /**
      * 移除followed标志
      */
-    public void removeFollowed(){
+    public void removeFollowed() {
         List<Currency> cs = Currency.dao.listFollowed();
-        if(null != cs){
+        if (null != cs) {
             for (Currency c : cs) {
                 Kline last1 = Kline.dao.getLastOneByCurrencyId(c.getId(), Kline.KLINE_TYPE_K);
-                if(null != last1){
+                if (null != last1) {
                     List<Kline> byDateRange = Kline.dao.getByDateRange(c.getId(), Kline.KLINE_TYPE_K, c.getFollowedDate(), last1.getDate());
-                    if(byDateRange.size()>=STOP_FOLLOW_LIMIT){
+                    if (byDateRange.size() >= STOP_FOLLOW_LIMIT) {
                         c.setFollowed(false);
                         c.setFollowedDate(null);
                         c.update();

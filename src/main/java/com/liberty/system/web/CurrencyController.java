@@ -212,7 +212,7 @@ public class CurrencyController extends BaseController {
         KlineController klineController = new KlineController();
         klineController.downloadData(c.getCode());
         klineController.createStroke(c.getCode());
-		klineController.createLine(c.getCode());
+        klineController.createLine(c.getCode());
 //		redirect("/currency/list");
         list();
     }
@@ -276,6 +276,7 @@ public class CurrencyController extends BaseController {
         int executorIndex = Integer.parseInt(paras.get("executorIndex"));
         Executor executor = ExecutorFactory.buildExecutor(executorIndex);
         executor.setCalibrate(true);
+        executor.setOnlyK(true);
         Calibrator calibrator = new Calibrator(executor);
         String code = paras.get("code");
         List<Currency> currencies = new ArrayList<>();
@@ -338,7 +339,7 @@ public class CurrencyController extends BaseController {
     public void execute() {
         // Strategy9Executor就传9
         int executorIndex = Integer.parseInt(paras.get("executorIndex"));
-        Executor executor = ExecutorFactory.buildExecutor(executorIndex);
+        Executor executor = ExecutorFactory.buildExecutor(executorIndex, false, true);
         // 可不传
         String code = paras.get("code");
         // 先更新数据
@@ -351,7 +352,7 @@ public class CurrencyController extends BaseController {
             listAll = Currency.dao.listAll();
         }
 //        listAll = listAll.stream().filter(item -> !item.getCode().startsWith("3")).collect(Collectors.toList());
-        klineController.multiProData(listAll);
+        klineController.multiProData(listAll, executor.isOnlyK());
         executor.execute(code);
         renderText("ok");
     }

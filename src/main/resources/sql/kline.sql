@@ -88,6 +88,24 @@
 	order by date asc
 #end
 
+#sql("listByCurrencyId")
+	select *
+	from kline
+	#set(flag=0)
+	#if(currencyId)
+		#(flag==0?"where":"and") currencyId = #para(currencyId)
+		#set(flag=1)
+	#end
+	#if(type)
+		#(flag==0?"where":"and") type = #para(type)
+		#set(flag=1)
+	#end
+	order by date asc
+	#if(limit)
+		limit #para(limit)
+	#end
+#end
+
 #sql("listAllByCurrencyIdBeforeDate")
 	select *
 	from kline

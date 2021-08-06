@@ -51,7 +51,6 @@ public class CalibratorTest {
 
         Executor executor = ExecutorFactory.buildExecutor(12);
         executor.setCalibrate(true);
-        executor.setOnlyK(true);
         calibrator = new Calibrator(executor);
     }
 
@@ -79,8 +78,19 @@ public class CalibratorTest {
         // true
 //        Currency currency = Currency.dao.findByCode("600990");
 //        Date startDate = DateUtil.strDate("2014-06-19", "yyyy-MM-dd");
+        // true
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2020-07-16", "yyyy-MM-dd");
+        // false
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2013-02-05", "yyyy-MM-dd");
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2012-03-14", "yyyy-MM-dd");
+//        Currency currency = Currency.dao.findByCode("600990");
+//        Date startDate = DateUtil.strDate("2019-03-14", "yyyy-MM-dd");
+
         Currency currency = Currency.dao.findByCode("600990");
-        Date startDate = DateUtil.strDate("2020-07-16", "yyyy-MM-dd");
+        Date startDate = DateUtil.strDate("2008-11-27", "yyyy-MM-dd");
         calibrator.calibrate(currency, startDate);
         System.out.println(111);
     }

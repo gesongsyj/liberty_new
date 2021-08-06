@@ -20,7 +20,7 @@ public class ReverseRoutine extends BaseController implements Job {
         // 更新数据
         KlineController klineController = new KlineController();
         List<Currency> listFollowed = Currency.dao.listFollowed();
-        klineController.multiProData(listFollowed,false);
+        klineController.multiProData(listFollowed);
         // 判断背驰
         AgentSyn agentSyn = new ReverseCheckStrategyAgent();
         agentSyn.execute();

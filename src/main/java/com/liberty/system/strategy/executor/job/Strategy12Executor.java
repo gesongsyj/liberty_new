@@ -2,9 +2,7 @@ package com.liberty.system.strategy.executor.job;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfplugin.mail.MailKit;
 import com.liberty.common.constant.ConstantDefine;
-import com.liberty.common.utils.MailUtil;
 import com.liberty.common.utils.stock.MaUtil;
 import com.liberty.common.utils.stock.MathUtil;
 import com.liberty.system.bean.common.LsmParam;
@@ -12,11 +10,9 @@ import com.liberty.system.blackHouse.RemoveStrategyBh;
 import com.liberty.system.model.Currency;
 import com.liberty.system.model.Kline;
 import com.liberty.system.model.Strategy;
-import com.liberty.system.model.Stroke;
 import com.liberty.system.strategy.executor.Executor;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -29,6 +25,7 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
 
     public Strategy12Executor() {
         this.strategy = Strategy.dao.findById(12);
+        this.setOnlyK(true);
     }
 
     @Override
@@ -53,21 +50,22 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
                 }
             }
         }
-        sendMailToBuy(stayCurrency, this);
+        sendDingtalkToBuy(stayCurrency, this);
         System.out.println("策略[" + this.getStrategy().getDescribe() + "]执行完毕!");
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
-        sendMailTimecost(time);
+        sendDingtalkTimecost(time);
         return stayCurrency;
     }
 
     @Override
     public boolean executeSingle(Currency currency) {
-        int dayCount = 20;
+        int dayCount20 = 20;
+        int dayCount30 = 30;
         // 先找到起始点,连续多天整个在M20以上
         // 时间升序
-        List<Kline> klines = Kline.dao.listAllByCurrencyId(currency.getId(), ConstantDefine.KLINE_TYPE_K);
-        if (klines.size() < dayCount) {
+        List<Kline> klines = Kline.dao.listByCurrencyId(currency.getId(), ConstantDefine.KLINE_TYPE_K, 500);
+        if (klines.size() < dayCount30) {
             return false;
         }
         int currentIndex = klines.size() - 1;
@@ -75,57 +73,75 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
         // 当前要满足的条件
         Kline currentKline = klines.get(currentIndex);
         Kline preKline = klines.get(preIndex);
-        Double ma20 = MaUtil.calculateMAPoint(klines.subList(currentIndex + 1 - dayCount, currentIndex + 1), dayCount);
-        if (!(currentKline.getMin() <= ma20 * (1 + 0.02) && currentKline.getMax() >= ma20 * (1 + 0.02) && preKline.getMin() > ma20)) {
+        Double ma20 = MaUtil.calculateMAPoint(klines.subList(currentIndex + 1 - dayCount20, currentIndex + 1), dayCount20);
+        Double ma30 = MaUtil.calculateMAPoint(klines.subList(currentIndex + 1 - dayCount30, currentIndex + 1), dayCount30);
+//        if (!(currentKline.getMin() <= ma20 * (1 + 0.02) && currentKline.getMax() >= ma20 * (1 + 0.02) && preKline.getMin() > ma20)) {
+//            return false;
+//        }
+        if (!(ma20 > ma30 && checkLowShape(klines))) {
             return false;
         }
         currentKline.put("ma20", ma20);
         int index = 0;
         // 找上穿点
-        for (int i = preIndex; i >= dayCount - 1; i--) {
-            ma20 = MaUtil.calculateMAPoint(klines.subList(i + 1 - dayCount, i + 1), dayCount);
+        double maxValue = 0;
+        int maxValueIndex = 0;
+        for (int i = preIndex; i >= dayCount20 - 1; i--) {
+            if ("0".equals(klines.get(i).getBosp())) {
+                return false;
+            }
+            ma20 = MaUtil.calculateMAPoint(klines.subList(i + 1 - dayCount20, i + 1), dayCount20);
             if ((klines.get(i).getMax() + klines.get(i).getMin()) / 2 <= ma20) {
-                if(klines.get(i+1).getMin()<ma20){
-                    index = i+1;
-                }else{
+                if (klines.get(i + 1).getMin() < ma20) {
+                    index = i + 1;
+                } else {
                     index = i;
                 }
                 break;
             }
             klines.get(i).put("ma20", ma20);
+            if (klines.get(i).getMax() > maxValue) {
+                maxValue = klines.get(i).getMax();
+                maxValueIndex = i;
+            }
         }
-        int compareNum = 5;
-        if (index + 1 < compareNum + dayCount) {
+        if (maxValueIndex != 0 && currentKline.getMin() > currentKline.getDouble("ma20") + (klines.get(maxValueIndex).getMin() - klines.get(maxValueIndex).getDouble("ma20")) * 2 / 3) {
             return false;
         }
-        if (klines.size() - index < compareNum * 2-2) {
+        int compareNum = klines.size() - index;
+        if (index + 1 < compareNum + dayCount30) {
             return false;
         }
-        // 往前要连续5个k在M20以下
+        int currentNum = 8;
+        if (klines.size() - index < currentNum) {
+            return false;
+        }
+        // 往前要连续多个k在M20以下
         int maxUnderNum = 0;
-        for (int i = index; i > index - compareNum; i--) {
-            Double maPoint = MaUtil.calculateMAPoint(klines.subList(i - dayCount, i), dayCount);
-            if (klines.get(i).getMin() > maPoint) {
-                return false;
-            }
-            if (klines.get(i).getMax() <= maPoint*(1+0.01)) {
+        for (int i = index; i > index - compareNum * 2; i--) {
+            Double maPoint = MaUtil.calculateMAPoint(klines.subList(i + 1 - dayCount20, i + 1), dayCount20);
+            if (klines.get(i).getMax() <= maPoint * (1 + 0.01)) {
                 maxUnderNum++;
+                int comparedNum = index - i + 1;
+                if (comparedNum >= 5 && maxUnderNum >= compareNum / 2 + 1) {
+                    break;
+                }
             }
         }
-        // compareNum个里面至少大半max在ma20以下
+        // 至少大半compareNum个max在ma20以下
         if (maxUnderNum < compareNum / 2 + 1) {
             return false;
         }
 
         List<Kline> subList = klines.subList(index + 1, currentIndex + 1);
-        List<Double> ma20List = subList.stream().map(e -> Double.parseDouble(e.get("ma20").toString())).collect(Collectors.toList());
+        List<Double> ma20List = subList.stream().map(e -> e.getDouble("ma20")).collect(Collectors.toList());
         // 进行标准化处理
         MathUtil.normalization(ma20List);
         // 最小二乘法计算alpha和beta值
         LsmParam lsmParam = MathUtil.lsmCal(ma20List);
         // 判断拟合度和斜率是否满足要求
 //        boolean lineFit = MathUtil.lineFittingCheck_new(ma20List, lsmParam, 0.0014, 0.993);
-        boolean lineFit = MathUtil.lineFittingCheck(ma20List, lsmParam, 0.0014, 0.012);
+        boolean lineFit = MathUtil.lineFittingCheck(ma20List, lsmParam, 0.0042, 0.012);
         if (!lineFit) {
             return false;
         }
