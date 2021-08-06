@@ -53,7 +53,11 @@ public class KlineCrawlerTest {
 
     @Test
     public void visit() throws Exception {
-        KlineCrawler klineCrawler = new KlineCrawler();
+        long start = System.currentTimeMillis();
+        KlineCrawler klineCrawler = new KlineCrawler(false);
         klineCrawler.start();
+        long end = System.currentTimeMillis();
+        double time = (end - start) * 1.0 / 1000 / 60;
+        System.out.println("耗时:" + time + "分钟");
     }
 }

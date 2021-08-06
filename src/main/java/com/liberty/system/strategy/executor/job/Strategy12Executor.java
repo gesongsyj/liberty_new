@@ -13,6 +13,7 @@ import com.liberty.system.model.Strategy;
 import com.liberty.system.strategy.executor.Executor;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -65,6 +66,7 @@ public class Strategy12Executor extends StrategyExecutor implements Executor {
         // 先找到起始点,连续多天整个在M20以上
         // 时间升序
         List<Kline> klines = Kline.dao.listByCurrencyId(currency.getId(), ConstantDefine.KLINE_TYPE_K, 500);
+        Collections.reverse(klines);
         if (klines.size() < dayCount30) {
             return false;
         }

@@ -9,6 +9,7 @@ import com.liberty.common.utils.DateUtil;
 import com.liberty.common.utils.ResultMsg;
 import com.liberty.common.utils.ResultStatusCode;
 import com.liberty.common.web.BaseController;
+import com.liberty.system.dingtalk.DingUtil;
 import com.liberty.system.downloader.DownLoader;
 import com.liberty.system.downloader.impl.DfcfDownLoader;
 import com.liberty.system.model.Currency;
@@ -16,6 +17,9 @@ import com.liberty.system.model.Kline;
 import com.liberty.system.model.Line;
 import com.liberty.system.model.Stroke;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -411,7 +415,7 @@ public class KlineController extends BaseController {
                     public void run() {
                         Currency currency = cs.get(index);
                         downloadData(currency.getCode());
-                        if(!onlyK){
+                        if (!onlyK) {
                             createStroke(currency.getCode());
                             createLine(currency.getCode());
                         }
@@ -431,7 +435,14 @@ public class KlineController extends BaseController {
         }
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
-        MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
+        String msg = "此次更新数据耗时:" + time + "分钟!";
+        try {
+            DingUtil.sendMsg(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("钉钉消息发送失败!");
+        }
+//        MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
     }
 
     /**
@@ -466,7 +477,14 @@ public class KlineController extends BaseController {
 
         long end = System.currentTimeMillis();
         double time = (end - start) * 1.0 / 1000 / 60;
-        MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
+        String msg = "此次更新数据耗时:" + time + "分钟!";
+        try {
+            DingUtil.sendMsg(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("钉钉消息发送失败!");
+        }
+//        MailKit.send("1971119509@qq.com", null, "更新数据库股票数据耗时提醒!", "此次更新数据耗时:" + time + "分钟!");
     }
 
     /**

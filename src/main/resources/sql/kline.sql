@@ -100,7 +100,7 @@
 		#(flag==0?"where":"and") type = #para(type)
 		#set(flag=1)
 	#end
-	order by date asc
+	order by date desc
 	#if(limit)
 		limit #para(limit)
 	#end

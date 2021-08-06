@@ -1,7 +1,10 @@
 package com.liberty.system.web.routine;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.liberty.system.strategy.executor.Executor;
+import com.liberty.system.strategy.executor.job.Strategy12Executor;
 import com.liberty.system.web.KlineController;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -17,16 +20,21 @@ import com.liberty.system.model.Currency;
  */
 public class RoutineController1 extends BaseController implements Job {
 
-	/**
-	 * 定时更新数据库中已有股票的数据,半天或者一天左右更新一次
-	 */
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		KlineController klineController = new KlineController();
-		List<Currency> listAll = Currency.dao.listAll();
-		klineController.multiProData(listAll);
-		// 处理标记
-		klineController.handleFollowed();
-	}
+    /**
+     * 更新数据和策略执行
+     */
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        KlineController klineController = new KlineController();
+        List<Currency> listAll = Currency.dao.listAll();
+        klineController.multiProData(listAll,true);
+        // 处理标记
+        klineController.handleFollowed();
+        List<Executor> exes = new ArrayList<Executor>();
+        exes.add(new Strategy12Executor());
+        for (Executor executor : exes) {
+            executor.execute(null);
+        }
+    }
 
 }
