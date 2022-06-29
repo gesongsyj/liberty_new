@@ -11,7 +11,7 @@
     <!-- 项目属性 -->
     <properties>
         <commons-codec.version>1.9</commons-codec.version>
-        <poi.version>3.9</poi.version>
+        <poi.version>4.1.1</poi.version>
         <ehcache.version>2.6.9</ehcache.version>
     </properties>
 
